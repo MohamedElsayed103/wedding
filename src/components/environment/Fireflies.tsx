@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useDeviceTier } from "@/hooks/useDeviceTier";
 import { useProgressEffect } from "@/hooks/useScroll";
 import { seededRandom, smoothstep } from "@/lib/utils";
@@ -9,8 +9,11 @@ import { seededRandom, smoothstep } from "@/lib/utils";
 export function Fireflies() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const { density } = useDeviceTier();
+  // Each firefly runs two infinite CSS animations — don't mount any of them
+  // until we're actually near the part of the film where they're visible.
+  const [visible, setVisible] = useState(false);
 
-  const count = Math.max(8, Math.round(26 * density));
+  const count = Math.max(6, Math.round(18 * density));
 
   const flies = useMemo(() => {
     const rnd = seededRandom(707);
@@ -31,7 +34,10 @@ export function Fireflies() {
       // Ignite from dusk (0.72) into night.
       wrapRef.current.style.opacity = String(smoothstep(0.7, 0.95, p));
     }
+    setVisible((v) => (p > 0.65 ? true : p < 0.6 ? false : v));
   });
+
+  if (!visible) return null;
 
   return (
     <div

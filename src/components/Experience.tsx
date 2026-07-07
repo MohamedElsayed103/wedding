@@ -13,7 +13,6 @@ import { Journey } from "@/components/scenes/Journey";
 import { Transformation } from "@/components/scenes/Transformation";
 import { InvitationCard } from "@/components/scenes/InvitationCard";
 import { Countdown } from "@/components/scenes/Countdown";
-import { Rsvp } from "@/components/scenes/Rsvp";
 import { Venue } from "@/components/scenes/Venue";
 import { Finale } from "@/components/scenes/Finale";
 
@@ -38,7 +37,6 @@ export function Experience() {
         <Transformation />
         <InvitationCard />
         <Countdown />
-        <Rsvp />
         <Venue />
         <Finale />
       </main>

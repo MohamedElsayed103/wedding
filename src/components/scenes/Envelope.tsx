@@ -12,6 +12,8 @@ import { useLenis } from "@/hooks/useScroll";
  */
 export function Envelope() {
   const [opened, setOpened] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { scrollTo } = useLenis();
 
   // Allow the very first scroll gesture to open the envelope too.
@@ -26,6 +28,14 @@ export function Envelope() {
     };
   }, [opened]);
 
+  // Once opened, the envelope has done its job — let it dissolve away so the
+  // garden underneath takes over instead of lingering on screen.
+  useEffect(() => {
+    if (!opened) return;
+    const t = setTimeout(() => setDismissed(true), 1650);
+    return () => clearTimeout(t);
+  }, [opened]);
+
   return (
     <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden safe-x">
       {/* soft radial spotlight */}
@@ -38,6 +48,20 @@ export function Envelope() {
       />
 
       <div className="relative flex flex-col items-center">
+        {!hidden && (
+          <motion.div
+            className="flex flex-col items-center"
+            animate={
+              dismissed
+                ? { opacity: 0, scale: 0.82, y: -60 }
+                : { opacity: 1, scale: 1, y: 0 }
+            }
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            onAnimationComplete={() => {
+              if (dismissed) setHidden(true);
+            }}
+            style={{ pointerEvents: dismissed ? "none" : undefined }}
+          >
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -167,6 +191,8 @@ export function Envelope() {
             </motion.div>
           </div>
         </div>
+          </motion.div>
+        )}
 
         {/* Prompt / hint */}
         <AnimatePresence mode="wait">

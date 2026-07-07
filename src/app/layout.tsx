@@ -59,7 +59,6 @@ export const metadata: Metadata = {
     "Mohamed and Mariam",
     "26 August 2026",
     "animated invitation",
-    "RSVP",
   ],
   openGraph: {
     title: SITE_TITLE,

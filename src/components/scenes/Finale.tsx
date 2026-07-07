@@ -27,7 +27,7 @@ export function Finale() {
   const textOpacity = useTransform(scrollYProgress, [0.45, 0.7], [0, 1]);
 
   return (
-    <section ref={ref} className="relative" style={{ height: "170svh" }}>
+    <section ref={ref} className="relative" style={{ height: "130svh" }}>
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden">
         {/* deepening night wash */}
         <motion.div

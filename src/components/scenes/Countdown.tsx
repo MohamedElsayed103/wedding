@@ -17,7 +17,7 @@ export function Countdown() {
   ];
 
   return (
-    <section className="relative flex min-h-[80svh] items-center justify-center py-20 safe-x">
+    <section className="relative flex min-h-[70svh] items-center justify-center py-14 safe-x">
       <div className="w-full max-w-2xl text-center">
         <Reveal>
           <p className="font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]">

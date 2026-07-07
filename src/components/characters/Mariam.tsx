@@ -23,10 +23,13 @@ export function Mariam({
   const isWedding = outfit === "wedding";
   const flip = facing === "left" ? -1 : 1;
 
-  const hijabA = isWedding ? "#fdfaf3" : "#e8d0b4";
-  const hijabB = isWedding ? "#ece1cf" : "#d3b590";
-  const dressA = isWedding ? "#fdfaf3" : "#e9d4b8";
-  const dressB = isWedding ? "#eee4d1" : "#cfb48e";
+  // Casual look uses a dusty rose/terracotta — luminous ivory for the wedding
+  // gown. The rose reads clearly against the cream/beige garden backdrop
+  // (plain beige on beige used to disappear into the background).
+  const hijabA = isWedding ? "#fdfaf3" : "#d99a8c";
+  const hijabB = isWedding ? "#ece1cf" : "#b06e5c";
+  const dressA = isWedding ? "#fdfaf3" : "#d38f7f";
+  const dressB = isWedding ? "#eee4d1" : "#a8604f";
   // Scope gradient ids per outfit — SVG ids are document-global and both
   // outfits render together during the transformation cross-fade.
   const u = isWedding ? "w" : "c";

@@ -14,7 +14,7 @@ export function ArabicCalligraphy() {
   const WRITE = 3.4;
 
   return (
-    <section className="relative flex min-h-[100svh] items-center justify-center safe-x">
+    <section className="relative flex min-h-[90svh] items-center justify-center safe-x">
       <div ref={ref} className="relative w-full max-w-3xl px-4 text-center">
         <motion.span
           initial={{ opacity: 0 }}

@@ -57,29 +57,3 @@ export const MEMORIES: Memory[] = [
   },
 ];
 
-/**
- * The film's chapters, expressed as scroll-progress ranges [0..1].
- * The Atmosphere reads `progress` to drive time-of-day + camera.
- */
-export const CHAPTERS = {
-  envelope: { start: 0.0, end: 0.08 },
-  calligraphy: { start: 0.08, end: 0.16 },
-  meeting: { start: 0.16, end: 0.34 },
-  journey: { start: 0.34, end: 0.56 },
-  transformation: { start: 0.56, end: 0.68 },
-  invitation: { start: 0.68, end: 0.78 },
-  countdown: { start: 0.78, end: 0.85 },
-  rsvp: { start: 0.85, end: 0.92 },
-  venue: { start: 0.92, end: 0.97 },
-  finale: { start: 0.97, end: 1.0 },
-} as const;
-
-export const CALENDAR_EVENT = {
-  title: "Wedding of Mohamed & Mariam",
-  description:
-    "Join us as we celebrate the wedding of Mohamed & Mariam. With love, in a garden of white roses and jasmine.",
-  location: "The Garden Pavilion",
-  // Local time; converted to UTC where required by each provider.
-  start: new Date("2026-08-26T17:00:00"),
-  end: new Date("2026-08-26T23:00:00"),
-} as const;

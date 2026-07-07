@@ -48,13 +48,15 @@ export function Mohamed({
           <stop offset="0" stopColor="#3b2a1e" />
           <stop offset="1" stopColor="#241811" />
         </linearGradient>
+        {/* casual shirt: soft sage green — reads clearly against the cream/beige garden */}
         <linearGradient id={`m-jacket-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={isWedding ? "#3d3d46" : "#efe7d6"} />
-          <stop offset="1" stopColor={isWedding ? "#282830" : "#ddd0b8"} />
+          <stop offset="0" stopColor={isWedding ? "#3d3d46" : "#a3b184"} />
+          <stop offset="1" stopColor={isWedding ? "#282830" : "#7d8a5f"} />
         </linearGradient>
+        {/* casual trousers: warm taupe — contrasts with both skin and shirt */}
         <linearGradient id={`m-legs-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={isWedding ? "#33333b" : "#f2ecdd"} />
-          <stop offset="1" stopColor={isWedding ? "#22222a" : "#e6ddc9"} />
+          <stop offset="0" stopColor={isWedding ? "#33333b" : "#9c8563"} />
+          <stop offset="1" stopColor={isWedding ? "#22222a" : "#7c6647"} />
         </linearGradient>
         <radialGradient id={`m-blush-${u}`} cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#eea882" stopOpacity="0.5" />
@@ -73,8 +75,8 @@ export function Mohamed({
         <path d="M84 300 L80 418 q0 6 7 6 h6 q6 0 6 -6 l3 -118 z" fill={legs} />
         <path d="M116 300 L120 418 q0 6 -7 6 h-6 q-6 0 -6 -6 l-3 -118 z" fill={legs} />
         {/* shoes */}
-        <path d="M73 418 q-3 12 8 13 h14 q4 0 4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#7c6244"} />
-        <path d="M127 418 q3 12 -8 13 h-14 q-4 0 -4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#7c6244"} />
+        <path d="M73 418 q-3 12 8 13 h14 q4 0 4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#5c4a34"} />
+        <path d="M127 418 q3 12 -8 13 h-14 q-4 0 -4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#5c4a34"} />
 
         {/* ---- neck (drawn before torso so the shoulders overlap its base) ---- */}
         <path d="M87 124 h26 v40 q-13 11 -26 0 z" fill="#e7ba92" />
@@ -112,11 +114,11 @@ export function Mohamed({
         ) : (
           <>
             {/* open collar */}
-            <path d="M100 156 l-13 7 l7 12 l6 -8 z" fill="#e6dcc6" />
-            <path d="M100 156 l13 7 l-7 12 l-6 -8 z" fill="#e6dcc6" />
-            <circle cx="100" cy="192" r="1.6" fill="#c3b48f" />
-            <circle cx="100" cy="212" r="1.6" fill="#c3b48f" />
-            <circle cx="100" cy="232" r="1.6" fill="#c3b48f" />
+            <path d="M100 156 l-13 7 l7 12 l6 -8 z" fill="#f4ecda" />
+            <path d="M100 156 l13 7 l-7 12 l-6 -8 z" fill="#f4ecda" />
+            <circle cx="100" cy="192" r="1.6" fill="#5c6a44" />
+            <circle cx="100" cy="212" r="1.6" fill="#5c6a44" />
+            <circle cx="100" cy="232" r="1.6" fill="#5c6a44" />
           </>
         )}
 

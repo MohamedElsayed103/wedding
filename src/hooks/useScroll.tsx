@@ -85,12 +85,12 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
-      duration: 0.75,
+      duration: 0.6,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !reducedMotion,
       syncTouch: false,
       touchMultiplier: 2,
-      wheelMultiplier: 1.35,
+      wheelMultiplier: 1.7,
     });
     lenisRef.current = lenis;
 

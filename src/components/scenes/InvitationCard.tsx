@@ -10,7 +10,7 @@ export function InvitationCard() {
   return (
     <section
       id="invitation"
-      className="relative flex min-h-[100svh] items-center justify-center py-24 safe-x"
+      className="relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
     >
       <motion.div
         initial={{ opacity: 0, y: 60, rotateX: 12 }}

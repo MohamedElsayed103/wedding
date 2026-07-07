@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useProgressEffect } from "@/hooks/useScroll";
 import { clamp, lerp, mix, seededRandom } from "@/lib/utils";
 
@@ -62,10 +62,12 @@ export function Sky() {
   const glowRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
 
+  // Fewer stars than before — the starfield is only ever glimpsed at dusk/night
+  // and each one is a permanently-animating element while mounted.
   const stars = useMemo(() => {
     const rnd = seededRandom(1337);
     const r2 = (n: number) => Math.round(n * 100) / 100;
-    return Array.from({ length: 70 }, (_, i) => ({
+    return Array.from({ length: 36 }, (_, i) => ({
       id: i,
       x: r2(rnd() * 100),
       y: r2(rnd() * 70),
@@ -74,6 +76,11 @@ export function Sky() {
       delay: r2(rnd() * 4),
     }));
   }, []);
+
+  // Stars/clouds are only ever visible near the edges of the film — don't
+  // pay for their (many) infinite CSS animations while fully transparent.
+  const [starsVisible, setStarsVisible] = useState(false);
+  const [cloudsVisible, setCloudsVisible] = useState(true);
 
   useProgressEffect((p) => {
     const s = sample(p);
@@ -87,6 +94,9 @@ export function Sky() {
     }
     if (glowRef.current) glowRef.current.style.opacity = String(s.glow);
     if (starsRef.current) starsRef.current.style.opacity = String(s.stars);
+
+    setStarsVisible((v) => (p > 0.55 ? true : p < 0.5 ? false : v));
+    setCloudsVisible((v) => (p < 0.78 ? true : p > 0.82 ? false : v));
   });
 
   return (
@@ -111,27 +121,28 @@ export function Sky() {
         }}
       />
 
-      {/* Starfield (fades in at night) */}
+      {/* Starfield (fades in at night; unmounted otherwise to save cycles) */}
       <div ref={starsRef} className="absolute inset-0" style={{ opacity: 0 }}>
-        {stars.map((st) => (
-          <span
-            key={st.id}
-            className="absolute rounded-full bg-white anim-twinkle"
-            style={{
-              left: `${st.x}%`,
-              top: `${st.y}%`,
-              width: `${st.s}px`,
-              height: `${st.s}px`,
-              animationDuration: `${st.d}s`,
-              animationDelay: `${st.delay}s`,
-              boxShadow: "0 0 6px rgba(255,255,255,0.8)",
-            }}
-          />
-        ))}
+        {starsVisible &&
+          stars.map((st) => (
+            <span
+              key={st.id}
+              className="absolute rounded-full bg-white anim-twinkle"
+              style={{
+                left: `${st.x}%`,
+                top: `${st.y}%`,
+                width: `${st.s}px`,
+                height: `${st.s}px`,
+                animationDuration: `${st.d}s`,
+                animationDelay: `${st.delay}s`,
+                boxShadow: "0 0 6px rgba(255,255,255,0.8)",
+              }}
+            />
+          ))}
       </div>
 
-      {/* Drifting soft clouds */}
-      <Clouds />
+      {/* Drifting soft clouds (daytime only) */}
+      {cloudsVisible && <Clouds />}
     </div>
   );
 }

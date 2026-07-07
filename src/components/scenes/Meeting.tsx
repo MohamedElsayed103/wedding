@@ -27,7 +27,7 @@ export function Meeting() {
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[115svh] items-center justify-center overflow-hidden"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
     >
       <motion.div
         style={{ opacity: titleOpacity }}

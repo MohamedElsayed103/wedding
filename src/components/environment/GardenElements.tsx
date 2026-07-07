@@ -37,14 +37,16 @@ export function Flower({
         className="h-full w-full overflow-visible transition-transform duration-500"
         style={{ transform: hovered ? "scale(1.18)" : "scale(1)" }}
       >
+        {/* five petals instead of the previous double ring — same silhouette
+            at a glance, half the animated shapes to paint/composite */}
         <g style={{ transformOrigin: "50px 50px" }}>
-          {[0, 60, 120, 180, 240, 300].map((deg) => (
+          {[0, 72, 144, 216, 288].map((deg) => (
             <ellipse
               key={deg}
               cx="50"
-              cy="30"
-              rx="15"
-              ry="22"
+              cy="32"
+              rx="14"
+              ry="21"
               fill={color}
               stroke="rgba(201,162,75,0.25)"
               strokeWidth="1"
@@ -55,24 +57,7 @@ export function Flower({
               }}
             />
           ))}
-          {/* inner petals */}
-          {[30, 90, 150, 210, 270, 330].map((deg) => (
-            <ellipse
-              key={deg}
-              cx="50"
-              cy="38"
-              rx="9"
-              ry="14"
-              fill={color}
-              opacity="0.92"
-              style={{
-                transformOrigin: "50px 50px",
-                transform: `rotate(${deg}deg)`,
-              }}
-            />
-          ))}
           <circle cx="50" cy="50" r="8" fill={center} />
-          <circle cx="50" cy="50" r="4" fill="#c9a24b" opacity="0.7" />
         </g>
       </svg>
     </div>

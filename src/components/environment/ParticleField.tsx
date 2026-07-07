@@ -44,7 +44,10 @@ export function ParticleField() {
     let dpr = 1;
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap the backing-store resolution — a full-screen canvas at dpr 3
+      // (common on phones) redraws several million extra pixels every frame
+      // for detail nobody notices in soft, blurry decorative particles.
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = Math.floor(w * dpr);
@@ -55,8 +58,8 @@ export function ParticleField() {
     };
     resize();
 
-    const base = reduced ? 14 : 70;
-    const count = Math.max(10, Math.round(base * density));
+    const base = reduced ? 10 : 42;
+    const count = Math.max(8, Math.round(base * density));
     const particles: P[] = [];
 
     const rand = (a: number, b: number) => a + Math.random() * (b - a);
@@ -175,11 +178,11 @@ export function ParticleField() {
             : 0.9;
         ctx.fillStyle = p.hue;
         if (p.kind === "dust") {
+          // A single soft-edged fill reads as a glow without the cost of
+          // shadowBlur, which is a full per-particle software blur pass —
+          // brutally expensive on mobile GPUs at this particle count.
           ctx.beginPath();
-          ctx.arc(0, 0, p.size * 0.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowColor = p.hue;
-          ctx.shadowBlur = 6;
+          ctx.arc(0, 0, p.size * 0.85, 0, Math.PI * 2);
           ctx.fill();
         } else if (p.kind === "leaf") {
           drawLeaf(p);

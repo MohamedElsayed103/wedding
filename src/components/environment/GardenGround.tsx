@@ -1,12 +1,18 @@
 "use client";
 
 import { cx } from "@/lib/utils";
+import { useDeviceTier } from "@/hooks/useDeviceTier";
 import { Flower, FoliageRow, Lantern, OliveBranch } from "./GardenElements";
 
 /**
  * The garden floor — a layered band of foliage, roses, olive branches and
  * lanterns anchored to the bottom of a scene. Shared across chapters so the
  * ground never "cuts", reinforcing the single-continuous-film feeling.
+ *
+ * Every flower/lantern here is a permanently-animating element, and this
+ * component is mounted several times across the page — so its count scales
+ * down automatically on weaker/mobile devices on top of each scene's own
+ * density hint.
  */
 export function GardenGround({
   className,
@@ -17,6 +23,9 @@ export function GardenGround({
   lanterns?: boolean;
   density?: number;
 }) {
+  const { density: tierDensity } = useDeviceTier();
+  const effectiveDensity = density * tierDensity;
+
   return (
     <div
       className={cx(
@@ -52,8 +61,8 @@ export function GardenGround({
 
       {/* scattered roses along the floor */}
       <div className="absolute bottom-0 left-0 right-0 h-[120px]">
-        {Array.from({ length: Math.round(9 * density) }).map((_, i) => {
-          const n = Math.round(9 * density);
+        {Array.from({ length: Math.max(3, Math.round(6 * effectiveDensity)) }).map((_, i) => {
+          const n = Math.max(3, Math.round(6 * effectiveDensity));
           const left = Math.round(((i / n) * 100 + (i % 2 ? 3 : -2)) * 100) / 100;
           const size = 30 + (i % 4) * 10;
           const white = i % 3 !== 0;

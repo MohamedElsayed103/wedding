@@ -43,7 +43,7 @@ export function Transformation() {
   }, []);
 
   return (
-    <section ref={ref} className="relative" style={{ height: "140svh" }}>
+    <section ref={ref} className="relative" style={{ height: "110svh" }}>
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         {/* golden-hour warm wash */}
         <motion.div

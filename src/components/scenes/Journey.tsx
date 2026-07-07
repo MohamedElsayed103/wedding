@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import { Couple } from "@/components/characters/Couple";
 import { GardenGround } from "@/components/environment/GardenGround";
 import { Flower } from "@/components/environment/GardenElements";
+import { useDeviceTier } from "@/hooks/useDeviceTier";
 import { MEMORIES, type Memory } from "@/lib/constants";
 import { seededRandom } from "@/lib/utils";
 
@@ -28,11 +29,13 @@ export function Journey() {
   );
   const coupleY = useTransform(scrollYProgress, [0, 1], ["2%", "-2%"]);
 
+  const { density } = useDeviceTier();
+  const flowerCount = Math.max(6, Math.round(14 * density));
   const pathFlowers = (() => {
     const rnd = seededRandom(555);
-    return Array.from({ length: 22 }, (_, i) => ({
+    return Array.from({ length: flowerCount }, (_, i) => ({
       id: i,
-      left: Math.round((i / 22) * 2000) / 10,
+      left: Math.round((i / flowerCount) * 2000) / 10,
       size: Math.round(22 + rnd() * 26),
       bottom: Math.round(rnd() * 30),
       white: rnd() > 0.4,
@@ -43,7 +46,7 @@ export function Journey() {
     <section
       ref={ref}
       className="relative"
-      style={{ height: `${MEMORIES.length * 72 + 40}svh` }}
+      style={{ height: `${MEMORIES.length * 50 + 30}svh` }}
     >
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         {/* moving flower path — the ground slides by as they walk forward */}

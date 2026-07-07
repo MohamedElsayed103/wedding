@@ -14,7 +14,7 @@ export function Venue() {
   return (
     <section
       id="venue"
-      className="relative flex min-h-[100svh] items-center justify-center py-24 safe-x"
+      className="relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
     >
       <div className="w-full max-w-2xl">
         <Reveal className="mb-8 text-center">
