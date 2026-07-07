@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+/* ============================================================
+   MOHAMED & MARIAM — Cinematic Wedding Experience
+   Design tokens (Tailwind v4 CSS-first theme)
+   ============================================================ */
+@theme {
+  /* Palette — ivory, beige, champagne, cream, off-white, gold, olive */
+  --color-ivory: #fbf7ef;
+  --color-cream: #f6efe2;
+  --color-beige: #e8dcc6;
+  --color-champagne: #e6cfa0;
+  --color-champagne-2: #e3caa0;
+  --color-sand: #d9c39c;
+  --color-gold: #c9a24b;
+  --color-gold-deep: #a67c34;
+  --color-gold-light: #e8ce8f;
+  --color-olive: #7d8a5f;
+  --color-olive-deep: #5c6a44;
+  --color-olive-soft: #9caa7d;
+  --color-ink: #4a4235;
+  --color-ink-soft: #6b6150;
+
+  /* Cinematic sky stops driven by scroll (day -> golden -> dusk -> night) */
+  --sky-top: #cfe0e8;
+  --sky-mid: #eef0e6;
+  --sky-bot: #f6efe2;
+
+  /* Fonts (wired via next/font variables in layout) */
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-display: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-roman: var(--font-cinzel), "Cinzel", serif;
+  --font-script: var(--font-vibes), "Great Vibes", cursive;
+  --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-arabic: var(--font-amiri), "Amiri", "Aref Ruqaa", serif;
+
+  /* Motion */
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Base ---- */
+:root {
+  color-scheme: light;
+  --scroll-progress: 0;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smoothing */
+}
+
+body {
+  margin: 0;
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent horizontal scroll on all devices */
+html,
+body {
+  max-width: 100%;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-gold-light);
+  color: var(--color-ink);
+}
+
+/* Scrollbar (subtle) */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ---- Typographic helpers ---- */
+.font-display { font-family: var(--font-display); }
+.font-serif { font-family: var(--font-serif); }
+.font-roman { font-family: var(--font-roman); }
+.font-script { font-family: var(--font-script); }
+.font-arabic { font-family: var(--font-arabic); direction: rtl; }
+
+.tracking-luxe { letter-spacing: 0.28em; }
+.tracking-wide-2 { letter-spacing: 0.14em; }
+
+.text-gradient-gold {
+  background: linear-gradient(100deg, var(--color-gold-deep), var(--color-gold), var(--color-gold-light), var(--color-gold));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Safe-area padding helpers (iPhone Dynamic Island / Android cutouts) */
+.safe-top { padding-top: max(1rem, env(safe-area-inset-top)); }
+.safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+.safe-x {
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+
+/* Glass card */
+.glass {
+  background: linear-gradient(
+    155deg,
+    rgba(251, 247, 239, 0.72),
+    rgba(246, 239, 226, 0.55)
+  );
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  box-shadow:
+    0 20px 60px -24px rgba(74, 66, 53, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.gold-hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 162, 75, 0.7),
+    transparent
+  );
+}
+
+/* ============================================================
+   KEYFRAMES — the world is always breathing
+   ============================================================ */
+@keyframes breathe {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-1.2%) scaleY(1.012); }
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(-1.6deg); }
+  50% { transform: rotate(1.6deg); }
+}
+@keyframes sway-soft {
+  0%, 100% { transform: rotate(-0.9deg) translateX(-0.5%); }
+  50% { transform: rotate(0.9deg) translateX(0.5%); }
+}
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95%, 97% { transform: scaleY(0.08); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes swing {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes bloom-in {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes rise-fade {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes drift-cloud {
+  0% { transform: translateX(-8%); }
+  100% { transform: translateX(8%); }
+}
+@keyframes walk-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-2px) rotate(-0.6deg); }
+  75% { transform: translateY(-2px) rotate(0.6deg); }
+}
+@keyframes hint-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+/* Utility animation classes */
+.anim-breathe { animation: breathe 5.5s var(--ease-soft) infinite; transform-origin: bottom center; }
+.anim-sway { animation: sway 6s var(--ease-soft) infinite; transform-origin: bottom center; }
+.anim-sway-soft { animation: sway-soft 7.5s var(--ease-soft) infinite; transform-origin: bottom center; }
+.anim-float { animation: float-y 7s var(--ease-soft) infinite; }
+.anim-swing { animation: swing 4.5s var(--ease-soft) infinite; transform-origin: top center; }
+.anim-twinkle { animation: twinkle 3.5s ease-in-out infinite; }
+.anim-shimmer { background-size: 200% auto; animation: shimmer 6s linear infinite; }
+
+/* Luxe form controls */
+.lux-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  transition: border-color 0.3s var(--ease-soft), box-shadow 0.3s var(--ease-soft);
+}
+.lux-input::placeholder {
+  color: rgba(107, 97, 80, 0.55);
+}
+.lux-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.lux-button {
+  background: linear-gradient(120deg, #e8ce8f, #c9a24b, #e8ce8f);
+  background-size: 200% auto;
+  box-shadow: 0 12px 30px -12px rgba(166, 124, 52, 0.6);
+  transition: background-position 0.6s var(--ease-soft), transform 0.2s var(--ease-soft), box-shadow 0.3s;
+}
+.lux-button:hover {
+  background-position: right center;
+  box-shadow: 0 16px 40px -12px rgba(166, 124, 52, 0.8);
+}
+.lux-button:active {
+  transform: scale(0.98);
+}
+
+/* Custom cursor (desktop pointer devices only) */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-hidden,
+  .cursor-hidden * {
+    cursor: none;
+  }
+}
+
+/* ---- Accessibility: honour reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
