@@ -42,7 +42,13 @@
 /* ---- Base ---- */
 :root {
   color-scheme: light;
-  --scroll-progress: 0;
+}
+
+/* Skip rendering work for scenes far off-screen. Applied to the non-pinned
+   sections; pinned (sticky) scenes must not use it. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100svh;
 }
 
 * {
@@ -293,6 +299,36 @@ html.lenis body {
 }
 .lux-button:active {
   transform: scale(0.98);
+}
+
+/* ---- Arabic mode ----
+   When the visitor chooses العربية, <html lang="ar" dir="rtl"> is set.
+   Amiri replaces the Latin display faces, and the wide letter-spacing that
+   flatters Latin caps is removed (it breaks connected Arabic script). */
+html[lang="ar"] body {
+  font-family: var(--font-arabic);
+}
+html[lang="ar"] .font-display,
+html[lang="ar"] .font-serif,
+html[lang="ar"] .font-roman,
+html[lang="ar"] .font-body {
+  font-family: var(--font-arabic);
+}
+html[lang="ar"] .font-script {
+  font-family: var(--font-arabic);
+  font-weight: 700;
+}
+html[lang="ar"] .tracking-luxe,
+html[lang="ar"] .tracking-wide-2 {
+  letter-spacing: 0;
+}
+html[lang="ar"] .font-serif,
+html[lang="ar"] .font-display {
+  font-style: normal; /* italics distort Arabic glyphs */
+}
+html[lang="ar"] i,
+html[lang="ar"] .italic {
+  font-style: normal;
 }
 
 /* Custom cursor (desktop pointer devices only) */

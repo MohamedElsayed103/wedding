@@ -10,8 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { clamp } from "@/lib/utils";
 import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 
@@ -34,12 +32,6 @@ const store = {
   set(progress: number, velocity: number) {
     _progress = clamp(progress);
     _velocity = velocity;
-    if (typeof document !== "undefined") {
-      document.documentElement.style.setProperty(
-        "--scroll-progress",
-        _progress.toFixed(4)
-      );
-    }
     emit();
   },
 };
@@ -82,15 +74,15 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
+    // Comfortable reading pace: smooth, unhurried, but never slow-motion.
+    // Touch devices use fully native scrolling (Lenis only reads position).
     const lenis = new Lenis({
-      duration: 0.6,
+      duration: 0.85,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !reducedMotion,
       syncTouch: false,
-      touchMultiplier: 2,
-      wheelMultiplier: 1.7,
+      touchMultiplier: 1.5,
+      wheelMultiplier: 1.15,
     });
     lenisRef.current = lenis;
 
@@ -103,21 +95,20 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       limit: number;
       velocity: number;
     }) => {
-      const p = limit > 0 ? scroll / limit : 0;
-      store.set(p, velocity);
-      ScrollTrigger.update();
+      store.set(limit > 0 ? scroll / limit : 0, velocity);
     };
     lenis.on("scroll", onScroll);
 
-    const raf = (time: number) => lenis.raf(time);
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
-    ScrollTrigger.refresh();
+    let raf = 0;
+    const loop = (time: number) => {
+      lenis.raf(time);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
 
     return () => {
+      cancelAnimationFrame(raf);
       lenis.off("scroll", onScroll);
-      gsap.ticker.remove(raf);
       lenis.destroy();
       lenisRef.current = null;
     };
@@ -129,7 +120,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       scrollTo: (target, offset = 0) =>
         lenisRef.current?.scrollTo(target, {
           offset,
-          duration: 1.6,
+          duration: 1.2,
         }),
     }),
     []

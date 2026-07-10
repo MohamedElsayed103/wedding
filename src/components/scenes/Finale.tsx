@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Couple } from "@/components/characters/Couple";
 import { FlowerArch } from "@/components/environment/GardenElements";
 import { GardenGround } from "@/components/environment/GardenGround";
-import { COUPLE, WEDDING_DATE_DOTS } from "@/lib/constants";
+import { WEDDING_DATE_DOTS } from "@/lib/constants";
+import { useLang } from "@/hooks/useLang";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
@@ -14,6 +15,7 @@ import { Reveal } from "@/components/ui/Reveal";
  */
 export function Finale() {
   const ref = useRef<HTMLElement>(null);
+  const { t } = useLang();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
@@ -27,7 +29,7 @@ export function Finale() {
   const textOpacity = useTransform(scrollYProgress, [0.45, 0.7], [0, 1]);
 
   return (
-    <section ref={ref} className="relative" style={{ height: "130svh" }}>
+    <section ref={ref} className="relative" style={{ height: "135svh" }}>
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden">
         {/* deepening night wash */}
         <motion.div
@@ -44,7 +46,7 @@ export function Finale() {
           style={{ scale: coupleScale, y: coupleY, opacity: coupleOpacity }}
           className="absolute bottom-[20%] left-1/2 z-10 h-[46vh] max-h-[440px] min-h-[250px] -translate-x-1/2"
         >
-          <Couple outfit="wedding" walking lookingAtEachOther className="h-full" />
+          <Couple attire="ceremony" walking lookingAtEachOther className="h-full" />
         </motion.div>
 
         {/* final title */}
@@ -53,12 +55,12 @@ export function Finale() {
           className="absolute top-[24%] left-0 right-0 z-20 text-center safe-x"
         >
           <h2 className="font-script text-5xl text-[color:var(--color-gold-light)] drop-shadow-[0_2px_20px_rgba(201,162,75,0.5)] sm:text-7xl">
-            Forever Begins
+            {t.foreverBegins}
           </h2>
           <div className="mt-6 flex items-center justify-center gap-4 font-display text-xl text-[color:var(--color-ivory)] sm:text-2xl">
-            <span>{COUPLE.groom}</span>
+            <span>{t.groom}</span>
             <span className="text-[color:var(--color-gold-light)]">♡</span>
-            <span>{COUPLE.bride}</span>
+            <span>{t.bride}</span>
           </div>
           <p className="mt-4 font-roman tracking-luxe text-xs text-[color:var(--color-gold-light)]">
             {WEDDING_DATE_DOTS}
@@ -72,10 +74,10 @@ export function Finale() {
       <div className="absolute bottom-0 left-0 right-0 z-20 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 text-center">
         <Reveal>
           <p className="font-serif text-sm italic text-[color:var(--color-ink-soft)]">
-            Made with love, for the ones we love.
+            {t.madeWithLove}
           </p>
           <p className="mt-1 font-body text-[0.6rem] tracking-wide-2 text-[color:var(--color-ink-soft)]/70">
-            {COUPLE.groom} &amp; {COUPLE.bride} · {WEDDING_DATE_DOTS}
+            {t.coupleNames} · {WEDDING_DATE_DOTS}
           </p>
         </Reveal>
       </div>

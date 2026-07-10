@@ -3,29 +3,32 @@
 import { FiMapPin, FiNavigation } from "react-icons/fi";
 import { Reveal } from "@/components/ui/Reveal";
 import { VENUE } from "@/lib/constants";
-
-const TIPS = [
-  { icon: "🅿️", title: "Parking", text: "Complimentary valet & garden-side parking on arrival." },
-  { icon: "🕰️", title: "Arrival", text: "Doors open 30 minutes before the ceremony begins." },
-  { icon: "🌿", title: "Dress", text: "Garden-elegant. Soft heels are kind to lawn paths." },
-];
+import { useLang } from "@/hooks/useLang";
 
 export function Venue() {
+  const { t } = useLang();
+
+  const tips = [
+    { icon: "🅿️", title: t.tipParkingTitle, text: t.tipParkingText },
+    { icon: "🕰️", title: t.tipArrivalTitle, text: t.tipArrivalText },
+    { icon: "🌿", title: t.tipDressTitle, text: t.tipDressText },
+  ];
+
   return (
     <section
       id="venue"
-      className="relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
+      className="cv-auto relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
     >
       <div className="w-full max-w-2xl">
         <Reveal className="mb-8 text-center">
           <p className="font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]">
-            WHERE FOREVER BEGINS
+            {t.venueLabel}
           </p>
           <h2 className="mt-3 font-display text-3xl text-[color:var(--color-ink)] sm:text-4xl">
-            {VENUE.name}
+            {t.venueName}
           </h2>
           <p className="mt-2 font-serif text-lg italic text-[color:var(--color-ink-soft)]">
-            {VENUE.city}
+            {t.venueCity}
           </p>
         </Reveal>
 
@@ -65,21 +68,21 @@ export function Venue() {
               className="lux-button mt-3 flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-roman text-xs tracking-luxe text-[#3c2c20]"
             >
               <FiNavigation />
-              GET DIRECTIONS
+              {t.directions}
             </a>
           </div>
         </Reveal>
 
         <Reveal delay={0.3}>
           <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {TIPS.map((t) => (
-              <div key={t.title} className="glass rounded-xl p-5 text-center">
-                <span className="text-2xl">{t.icon}</span>
+            {tips.map((tip) => (
+              <div key={tip.title} className="glass rounded-xl p-5 text-center">
+                <span className="text-2xl">{tip.icon}</span>
                 <h4 className="mt-2 font-roman text-xs tracking-wide-2 text-[color:var(--color-gold-deep)]">
-                  {t.title.toUpperCase()}
+                  {tip.title}
                 </h4>
                 <p className="mt-1 font-body text-xs leading-relaxed text-[color:var(--color-ink-soft)]">
-                  {t.text}
+                  {tip.text}
                 </p>
               </div>
             ))}

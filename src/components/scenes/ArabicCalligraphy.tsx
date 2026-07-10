@@ -2,7 +2,8 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { ARABIC_VERSE, ARABIC_VERSE_TRANSLATION } from "@/lib/constants";
+import { ARABIC_VERSE } from "@/lib/constants";
+import { useLang } from "@/hooks/useLang";
 
 /**
  * The Qur'anic verse reveals itself in gold ink — written right-to-left by a
@@ -11,10 +12,11 @@ import { ARABIC_VERSE, ARABIC_VERSE_TRANSLATION } from "@/lib/constants";
 export function ArabicCalligraphy() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
+  const { t } = useLang();
   const WRITE = 3.4;
 
   return (
-    <section className="relative flex min-h-[90svh] items-center justify-center safe-x">
+    <section className="cv-auto relative flex min-h-[90svh] items-center justify-center safe-x">
       <div ref={ref} className="relative w-full max-w-3xl px-4 text-center">
         <motion.span
           initial={{ opacity: 0 }}
@@ -22,7 +24,7 @@ export function ArabicCalligraphy() {
           transition={{ duration: 1 }}
           className="mb-6 block font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]"
         >
-          IN THE NAME OF LOVE &amp; MERCY
+          {t.calligraphyLabel}
         </motion.span>
 
         <div className="relative inline-block">
@@ -65,7 +67,7 @@ export function ArabicCalligraphy() {
           transition={{ delay: WRITE + 0.3, duration: 1.2 }}
           className="mt-8 font-serif text-base italic text-[color:var(--color-ink-soft)] sm:text-lg"
         >
-          {ARABIC_VERSE_TRANSLATION}
+          {t.verseTranslation}
         </motion.p>
 
         <motion.p
@@ -74,7 +76,7 @@ export function ArabicCalligraphy() {
           transition={{ delay: WRITE + 0.9, duration: 1 }}
           className="mt-2 font-body text-[0.62rem] tracking-wide-2 text-[color:var(--color-ink-soft)]"
         >
-          Sūrah ar-Rūm · 30:21
+          {t.verseReference}
         </motion.p>
       </div>
     </section>

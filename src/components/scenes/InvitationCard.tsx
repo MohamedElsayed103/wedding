@@ -2,15 +2,16 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
-import { COUPLE, WEDDING_DATE_LABEL, VENUE } from "@/lib/constants";
+import { useLang } from "@/hooks/useLang";
 import { OliveBranch } from "@/components/environment/GardenElements";
 
 /** The floating, luxurious wedding invitation. */
 export function InvitationCard() {
+  const { t } = useLang();
   return (
     <section
       id="invitation"
-      className="relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
+      className="cv-auto relative flex min-h-[90svh] items-center justify-center py-16 safe-x"
     >
       <motion.div
         initial={{ opacity: 0, y: 60, rotateX: 12 }}
@@ -25,17 +26,17 @@ export function InvitationCard() {
 
         <Reveal delay={0.1}>
           <p className="font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]">
-            TOGETHER WITH THEIR FAMILIES
+            {t.togetherWithFamilies}
           </p>
         </Reveal>
 
         <Reveal delay={0.2}>
           <h2 className="mt-8 font-script text-5xl leading-tight text-[color:var(--color-gold-deep)] sm:text-6xl">
-            {COUPLE.groom}
+            {t.groom}
           </h2>
-          <p className="my-2 font-serif text-2xl text-[color:var(--color-ink-soft)]">&amp;</p>
+          <p className="my-2 font-serif text-2xl text-[color:var(--color-ink-soft)]">{t.and}</p>
           <h2 className="font-script text-5xl leading-tight text-[color:var(--color-gold-deep)] sm:text-6xl">
-            {COUPLE.bride}
+            {t.bride}
           </h2>
         </Reveal>
 
@@ -49,13 +50,13 @@ export function InvitationCard() {
 
         <Reveal delay={0.45}>
           <p className="font-serif text-lg italic text-[color:var(--color-ink-soft)]">
-            request the honour of your presence
+            {t.honourOfPresence}
           </p>
           <p className="mt-6 font-display text-2xl tracking-wide-2 text-[color:var(--color-ink)] sm:text-3xl">
-            {WEDDING_DATE_LABEL}
+            {t.dateLabel}
           </p>
           <p className="mt-2 font-body text-sm tracking-wide-2 text-[color:var(--color-ink-soft)]">
-            {VENUE.name} · {VENUE.city}
+            {t.venueName} · {t.venueCity}
           </p>
         </Reveal>
       </motion.div>

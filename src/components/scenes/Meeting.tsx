@@ -6,6 +6,7 @@ import { Mohamed } from "@/components/characters/Mohamed";
 import { Mariam } from "@/components/characters/Mariam";
 import { GardenGround } from "@/components/environment/GardenGround";
 import { Flower } from "@/components/environment/GardenElements";
+import { useLang } from "@/hooks/useLang";
 
 /**
  * CHAPTER 1 — Mohamed enters from one side, Mariam from the other. They notice
@@ -14,6 +15,7 @@ import { Flower } from "@/components/environment/GardenElements";
  */
 export function Meeting() {
   const ref = useRef<HTMLElement>(null);
+  const { t } = useLang();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "center center"],
@@ -34,10 +36,10 @@ export function Meeting() {
         className="pointer-events-none absolute top-[14%] left-0 right-0 z-20 text-center safe-x"
       >
         <p className="font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]">
-          CHAPTER ONE
+          {t.chapterOne}
         </p>
         <h2 className="mt-2 font-display text-2xl text-[color:var(--color-ink)] sm:text-4xl">
-          Two paths, one garden
+          {t.chapterOneTitle}
         </h2>
       </motion.div>
 
@@ -45,10 +47,10 @@ export function Meeting() {
       <div className="absolute bottom-[14%] left-1/2 z-10 h-[42vh] max-h-[420px] min-h-[240px] -translate-x-1/2">
         <div className="relative h-full w-[80vw] max-w-[520px]">
           <motion.div style={{ x: mohamedX }} className="absolute bottom-0 left-1/2 h-full">
-            <Mohamed outfit="casual" facing="right" className="h-full" />
+            <Mohamed facing="right" className="h-full" />
           </motion.div>
           <motion.div style={{ x: mariamX }} className="absolute bottom-0 left-1/2 h-full">
-            <Mariam outfit="casual" facing="left" className="h-full" />
+            <Mariam facing="left" className="h-full" />
           </motion.div>
 
           {/* the spark between them */}

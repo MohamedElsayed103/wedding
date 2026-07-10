@@ -61,7 +61,11 @@ export function CustomCursor() {
   if (!enabled) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden>
+    // z-[200]: must render above every full-screen overlay (LanguageGate
+    // z-110, Preloader z-100) — otherwise the native cursor is suppressed
+    // globally by .cursor-hidden while this replacement sits hidden behind
+    // an opaque overlay, leaving no visible pointer at all.
+    <div className="pointer-events-none fixed inset-0 z-[200]" aria-hidden>
       <div
         ref={dotRef}
         className="fixed left-0 top-0 h-2 w-2 rounded-full"

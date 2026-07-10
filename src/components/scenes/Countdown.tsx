@@ -4,27 +4,29 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCountdown } from "@/hooks/useCountdown";
 import { WEDDING_DATE, WEDDING_DATE_DOTS } from "@/lib/constants";
 import { Reveal } from "@/components/ui/Reveal";
+import { useLang } from "@/hooks/useLang";
 import { pad2 } from "@/lib/utils";
 
 export function Countdown() {
   const time = useCountdown(WEDDING_DATE);
+  const { t } = useLang();
 
   const units = [
-    { label: "Days", value: time?.days ?? 0 },
-    { label: "Hours", value: time?.hours ?? 0 },
-    { label: "Minutes", value: time?.minutes ?? 0 },
-    { label: "Seconds", value: time?.seconds ?? 0 },
+    { label: t.days, value: time?.days ?? 0 },
+    { label: t.hours, value: time?.hours ?? 0 },
+    { label: t.minutes, value: time?.minutes ?? 0 },
+    { label: t.seconds, value: time?.seconds ?? 0 },
   ];
 
   return (
-    <section className="relative flex min-h-[70svh] items-center justify-center py-14 safe-x">
+    <section className="cv-auto relative flex min-h-[70svh] items-center justify-center py-14 safe-x">
       <div className="w-full max-w-2xl text-center">
         <Reveal>
           <p className="font-roman tracking-luxe text-[0.65rem] text-[color:var(--color-gold-deep)]">
-            COUNTING THE MOMENTS
+            {t.countingLabel}
           </p>
           <h2 className="mt-3 font-display text-2xl text-[color:var(--color-ink)] sm:text-4xl">
-            Until we say “forever”
+            {t.countingTitle}
           </h2>
         </Reveal>
 
@@ -50,7 +52,7 @@ export function Countdown() {
                   </AnimatePresence>
                 </div>
                 <span className="mt-3 font-roman text-[0.55rem] tracking-luxe text-[color:var(--color-ink-soft)] sm:text-xs">
-                  {u.label.toUpperCase()}
+                  {u.label}
                 </span>
               </div>
             ))}

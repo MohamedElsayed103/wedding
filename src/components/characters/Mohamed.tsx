@@ -2,34 +2,39 @@
 
 import { cx } from "@/lib/utils";
 
+export type Attire = "signature" | "ceremony";
+
 interface Props {
-  outfit?: "casual" | "wedding";
   className?: string;
+  /** Gaze/lean direction — used when the couple look at each other. */
   facing?: "left" | "right" | "front";
   animate?: boolean;
+  /** "signature" = espresso suit like the photo; "ceremony" = black tuxedo. */
+  attire?: Attire;
 }
 
 /**
- * Mohamed — a refined flat-illustration groom: fair skin, tidy dark hair,
- * a neat trimmed beard following the jaw, warm eyes and a gentle smile.
- * Blinks, breathes and sways softly.
+ * Mohamed — modelled on the engagement photo: three-piece suit, white shirt,
+ * short neat beard, dark swept hair and a warm smile. The finale swaps to a
+ * black tuxedo with a bow tie. A soft outline + rim glow keeps him readable
+ * against the cream garden backdrop.
  */
 export function Mohamed({
-  outfit = "casual",
   className,
   facing = "front",
   animate = true,
+  attire = "signature",
 }: Props) {
-  const isWedding = outfit === "wedding";
   const flip = facing === "left" ? -1 : 1;
-  // SVG gradient ids are document-global; scope them per outfit so multiple
-  // instances on the page (e.g. the transformation cross-fade) never collide.
-  const u = isWedding ? "w" : "c";
-  const skin = `url(#m-skin-${u})`;
-  const hair = `url(#m-hair-${u})`;
-  const jacket = `url(#m-jacket-${u})`;
-  const legs = `url(#m-legs-${u})`;
-  const blush = `url(#m-blush-${u})`;
+  const cer = attire === "ceremony";
+  // SVG ids are document-global and both attires render on the same page —
+  // scope every gradient id per attire so they never collide.
+  const u = cer ? "c" : "s";
+  const suit = `url(#mo-suit-${u})`;
+  const vest = `url(#mo-vest-${u})`;
+  const legs = `url(#mo-legs-${u})`;
+  const lapel = cer ? "#33333c" : "#514134";
+  const crease = cer ? "#4a4a55" : "#5a4936";
 
   return (
     <svg
@@ -40,32 +45,43 @@ export function Mohamed({
       aria-label="Mohamed"
     >
       <defs>
-        <linearGradient id={`m-skin-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f6d9bd" />
-          <stop offset="1" stopColor="#eec49e" />
+        <linearGradient id={`mo-skin-${u}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#f4d6b8" />
+          <stop offset="1" stopColor="#e9bf98" />
         </linearGradient>
-        <linearGradient id={`m-hair-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#3b2a1e" />
-          <stop offset="1" stopColor="#241811" />
+        <linearGradient id={`mo-hair-${u}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#332318" />
+          <stop offset="1" stopColor="#1c120b" />
         </linearGradient>
-        {/* casual shirt: soft sage green — reads clearly against the cream/beige garden */}
-        <linearGradient id={`m-jacket-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={isWedding ? "#3d3d46" : "#a3b184"} />
-          <stop offset="1" stopColor={isWedding ? "#282830" : "#7d8a5f"} />
+        {/* espresso-brown suit (photo) or black tuxedo (ceremony) */}
+        <linearGradient id={`mo-suit-${u}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={cer ? "#2e2e36" : "#4a3b2e"} />
+          <stop offset="1" stopColor={cer ? "#17171d" : "#332619"} />
         </linearGradient>
-        {/* casual trousers: warm taupe — contrasts with both skin and shirt */}
-        <linearGradient id={`m-legs-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={isWedding ? "#33333b" : "#9c8563"} />
-          <stop offset="1" stopColor={isWedding ? "#22222a" : "#7c6647"} />
+        <linearGradient id={`mo-vest-${u}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={cer ? "#26262e" : "#57463a"} />
+          <stop offset="1" stopColor={cer ? "#131318" : "#3d2f23"} />
         </linearGradient>
-        <radialGradient id={`m-blush-${u}`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#eea882" stopOpacity="0.5" />
-          <stop offset="1" stopColor="#eea882" stopOpacity="0" />
+        <linearGradient id={`mo-legs-${u}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={cer ? "#26262e" : "#42342a"} />
+          <stop offset="1" stopColor={cer ? "#101015" : "#2c211a"} />
+        </linearGradient>
+        <radialGradient id={`mo-blush-${u}`} cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#e8a37d" stopOpacity="0.45" />
+          <stop offset="1" stopColor="#e8a37d" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={`mo-rim-${u}`} cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#fffdf6" stopOpacity="0.55" />
+          <stop offset="0.7" stopColor="#fffdf6" stopOpacity="0.18" />
+          <stop offset="1" stopColor="#fffdf6" stopOpacity="0" />
         </radialGradient>
       </defs>
 
+      {/* soft rim glow so the dark suit + face read against any backdrop */}
+      <ellipse cx="100" cy="220" rx="105" ry="215" fill={`url(#mo-rim-${u})`} />
+
       {/* ground shadow */}
-      <ellipse cx="100" cy="432" rx="46" ry="7" fill="#4a4235" opacity="0.15" />
+      <ellipse cx="100" cy="432" rx="46" ry="7" fill="#4a4235" opacity="0.18" />
 
       <g
         className={animate ? "anim-breathe" : undefined}
@@ -74,72 +90,97 @@ export function Mohamed({
         {/* ---- legs ---- */}
         <path d="M84 300 L80 418 q0 6 7 6 h6 q6 0 6 -6 l3 -118 z" fill={legs} />
         <path d="M116 300 L120 418 q0 6 -7 6 h-6 q-6 0 -6 -6 l-3 -118 z" fill={legs} />
-        {/* shoes */}
-        <path d="M73 418 q-3 12 8 13 h14 q4 0 4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#5c4a34"} />
-        <path d="M127 418 q3 12 -8 13 h-14 q-4 0 -4 -5 v-8 z" fill={isWedding ? "#1c1610" : "#5c4a34"} />
+        {/* trouser crease highlights */}
+        <path d="M88 305 L85 415" stroke={crease} strokeWidth="1.4" opacity="0.5" />
+        <path d="M112 305 L115 415" stroke={crease} strokeWidth="1.4" opacity="0.5" />
+        {/* polished shoes */}
+        <path d="M73 418 q-3 12 8 13 h14 q4 0 4 -5 v-8 z" fill="#1a120c" />
+        <path d="M127 418 q3 12 -8 13 h-14 q-4 0 -4 -5 v-8 z" fill="#1a120c" />
+        <path d="M76 421 q6 5 22 4" stroke="#3d2f23" strokeWidth="1.4" fill="none" opacity="0.8" />
+        <path d="M124 421 q-6 5 -22 4" stroke="#3d2f23" strokeWidth="1.4" fill="none" opacity="0.8" />
 
-        {/* ---- neck (drawn before torso so the shoulders overlap its base) ---- */}
+        {/* ---- neck ---- */}
         <path d="M87 124 h26 v40 q-13 11 -26 0 z" fill="#e7ba92" />
-        {/* neck shadow under the jaw */}
         <path d="M87 128 q13 8 26 0 v6 q-13 7 -26 0 z" fill="#d9a980" opacity="0.55" />
 
-        {/* ---- torso (shoulders raised to meet the neck) ---- */}
+        {/* ---- torso: jacket ---- */}
         <path
           d="M58 160 q42 -22 84 0 q8 5 8 16 l6 108 q-52 16 -108 0 l6 -108 q0 -11 8 -16 z"
-          fill={jacket}
+          fill={suit}
+          stroke="#241a10"
+          strokeWidth="1.6"
+          strokeOpacity="0.35"
         />
 
         {/* ---- arms ---- */}
-        <path d="M66 166 q-16 8 -20 46 l-8 56 q0 7 7 8 q7 0 8 -6 l12 -60 z" fill={jacket} />
-        <path d="M134 166 q16 8 20 46 l8 56 q0 7 -7 8 q-7 0 -8 -6 l-12 -60 z" fill={jacket} />
-        <circle cx="42" cy="278" r="8" fill={skin} />
-        <circle cx="158" cy="278" r="8" fill={skin} />
+        <path d="M66 166 q-16 8 -20 46 l-8 56 q0 7 7 8 q7 0 8 -6 l12 -60 z" fill={suit} stroke="#241a10" strokeWidth="1.4" strokeOpacity="0.3" />
+        {/* right arm bent — hands clasped like the photo */}
+        <path d="M134 166 q16 8 20 46 l6 40 q-2 8 -9 7 q-6 -1 -7 -7 l-10 -56 z" fill={suit} stroke="#241a10" strokeWidth="1.4" strokeOpacity="0.3" />
+        {/* cuffs */}
+        <path d="M44 262 q6 5 15 3 l1 6 q-9 3 -17 -2 z" fill="#f7f3ea" />
+        <path d="M156 246 q-6 5 -15 3 l-1 6 q9 3 17 -2 z" fill="#f7f3ea" />
+        {/* hands */}
+        <circle cx="52" cy="274" r="8" fill={`url(#mo-skin-${u})`} />
+        <circle cx="148" cy="258" r="8" fill={`url(#mo-skin-${u})`} />
+        {/* watch on the left wrist, like the photo */}
+        <rect x="140" y="243" width="14" height="7" rx="3" fill="#3a2e22" />
+        <circle cx="147" cy="246.5" r="4" fill="#e8ce8f" stroke="#3a2e22" strokeWidth="1.4" />
 
-        {/* ---- outfit detail ---- */}
-        {isWedding ? (
+        {/* ---- shirt + waistcoat + lapels + tie ---- */}
+        <path d="M100 156 l-15 8 v70 h30 v-70 z" fill="#f7f3ea" />
+        <path d="M85 166 l15 8 l15 -8 l6 20 l-5 58 q-16 8 -32 0 l-5 -58 z" fill={vest} />
+        <circle cx="100" cy="204" r="1.5" fill="#c9a24b" />
+        <circle cx="100" cy="218" r="1.5" fill="#c9a24b" />
+        <circle cx="100" cy="232" r="1.5" fill="#c9a24b" />
+        <path d="M96 156 l-22 8 l14 74 l10 -8 z" fill={lapel} />
+        <path d="M104 156 l22 8 l-14 74 l-10 -8 z" fill={lapel} />
+        {cer ? (
           <>
-            {/* shirt V */}
-            <path d="M100 156 l-15 8 v70 h30 v-70 z" fill="#f4ecda" />
-            {/* waistcoat */}
-            <path d="M85 166 l15 8 l15 -8 l6 20 l-5 58 q-16 8 -32 0 l-5 -58 z" fill="#2b2b33" />
-            <circle cx="100" cy="204" r="1.5" fill="#c9a24b" />
-            <circle cx="100" cy="218" r="1.5" fill="#c9a24b" />
-            <circle cx="100" cy="232" r="1.5" fill="#c9a24b" />
-            {/* lapels */}
-            <path d="M96 156 l-22 8 l14 74 l10 -8 z" fill="#31313a" />
-            <path d="M104 156 l22 8 l-14 74 l-10 -8 z" fill="#31313a" />
-            {/* tie */}
-            <path d="M100 162 l6 7 l-3 42 l-3 6 l-3 -6 l-3 -42 z" fill="#e6d3a8" />
+            {/* black bow tie */}
+            <path d="M99 166 q-11 -7 -14 -1 q-2 6 3 9 q6 3 11 -3 z" fill="#17171d" />
+            <path d="M101 166 q11 -7 14 -1 q2 6 -3 9 q-6 3 -11 -3 z" fill="#17171d" />
+            <rect x="96.5" y="163" width="7" height="8" rx="2.4" fill="#26262e" />
           </>
         ) : (
           <>
-            {/* open collar */}
-            <path d="M100 156 l-13 7 l7 12 l6 -8 z" fill="#f4ecda" />
-            <path d="M100 156 l13 7 l-7 12 l-6 -8 z" fill="#f4ecda" />
-            <circle cx="100" cy="192" r="1.6" fill="#5c6a44" />
-            <circle cx="100" cy="212" r="1.6" fill="#5c6a44" />
-            <circle cx="100" cy="232" r="1.6" fill="#5c6a44" />
+            {/* champagne tie */}
+            <path d="M100 162 l6 7 l-3 42 l-3 6 l-3 -6 l-3 -42 z" fill="#ead9b0" />
+            <path d="M100 162 l6 7 l-6 3 l-6 -3 z" fill="#dcc491" />
           </>
         )}
+        {/* pocket square */}
+        <path d="M120 196 l10 -4 l-1 8 l-8 2 z" fill="#f7f3ea" />
 
-        {/* ---- head (pivots at the neck base so it never detaches) ---- */}
+        {/* ---- head (pivots at the neck base) ---- */}
         <g
           className={animate ? "anim-sway" : undefined}
           style={{ transformOrigin: "100px 132px", animationDuration: "8s" }}
         >
           {/* ears */}
-          <circle cx="63" cy="94" r="8" fill={skin} />
-          <circle cx="137" cy="94" r="8" fill={skin} />
+          <circle cx="63" cy="94" r="8" fill={`url(#mo-skin-${u})`} />
+          <circle cx="137" cy="94" r="8" fill={`url(#mo-skin-${u})`} />
 
-          {/* face — clean-shaven */}
+          {/* face */}
           <path
             d="M62 72 q0 -36 38 -36 q38 0 38 36 q0 28 -9 46 q-9 20 -29 20 q-20 0 -29 -20 q-9 -18 -9 -46 z"
-            fill={skin}
+            fill={`url(#mo-skin-${u})`}
           />
-          {/* soft jaw shading */}
-          <path d="M72 116 q28 22 56 0 q-6 16 -28 16 q-22 0 -28 -16 z" fill="#e6b892" opacity="0.4" />
 
-          {/* short, tidy swept hair */}
+          {/* short, well-groomed beard — a thin band hugging the jawline */}
+          <path
+            d="M66 96
+               Q71 126 88 135 Q100 140 112 135 Q129 126 134 96
+               L130 96 Q126 119 110 127 Q100 131 90 127 Q74 119 70 96 Z"
+            fill="#2b1c12"
+            opacity="0.95"
+          />
+          {/* moustache */}
+          <path d="M89 109 q11 5 22 0 q-3 5.5 -11 5.5 q-8 0 -11 -5.5 z" fill="#2b1c12" opacity="0.95" />
+
+          {/* mouth — warm smile on the skin, not buried in the beard */}
+          <path d="M91 118 q9 7 18 0" stroke="#b0644c" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+
+          {/* short tidy swept hair */}
           <path
             d="M60 82
                C54 54 64 36 86 32
@@ -150,21 +191,17 @@ export function Mohamed({
                C119 53 110 51 100 51
                C85 51 73 55 66 66
                C62 72 60 77 60 82 Z"
-            fill={hair}
+            fill={`url(#mo-hair-${u})`}
           />
-          {/* darker under-layer for depth at the sides */}
-          <path d="M60 82 C57 62 62 48 71 40 C66 54 64 68 66 82 Z" fill="#241811" opacity="0.55" />
-          <path d="M140 84 C143 64 140 48 131 40 C136 54 138 70 134 84 Z" fill="#241811" opacity="0.5" />
-          {/* textured strands swept back */}
-          <path d="M80 44 q8 8 6 18" stroke="#7a5636" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.7" />
-          <path d="M97 40 q8 9 6 20" stroke="#7a5636" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.7" />
-          <path d="M114 42 q6 8 5 18" stroke="#7a5636" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.65" />
-          {/* highlight sheen */}
-          <path d="M84 38 q16 -5 32 4" stroke="#a07a52" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.5" />
+          <path d="M60 82 C57 62 62 48 71 40 C66 54 64 68 66 82 Z" fill="#180f09" opacity="0.55" />
+          <path d="M140 84 C143 64 140 48 131 40 C136 54 138 70 134 84 Z" fill="#180f09" opacity="0.5" />
+          <path d="M80 44 q8 8 6 18" stroke="#6b4b30" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
+          <path d="M97 40 q8 9 6 20" stroke="#6b4b30" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6" />
+          <path d="M114 42 q6 8 5 18" stroke="#6b4b30" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.55" />
 
           {/* eyebrows */}
-          <path d="M76 72 q9 -4 17 -1" stroke="#3b2a1e" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M107 71 q8 -3 17 1" stroke="#3b2a1e" strokeWidth="3" fill="none" strokeLinecap="round" />
+          <path d="M76 72 q9 -4 17 -1" stroke="#2b1c11" strokeWidth="3" fill="none" strokeLinecap="round" />
+          <path d="M107 71 q8 -3 17 1" stroke="#2b1c11" strokeWidth="3" fill="none" strokeLinecap="round" />
 
           {/* eyes */}
           <g
@@ -176,21 +213,18 @@ export function Mohamed({
           >
             <ellipse cx="84" cy="84" rx="5.5" ry="6.2" fill="#fff" />
             <ellipse cx="116" cy="84" rx="5.5" ry="6.2" fill="#fff" />
-            <circle cx="85" cy="85" r="3" fill="#3a2418" />
-            <circle cx="117" cy="85" r="3" fill="#3a2418" />
+            <circle cx="85" cy="85" r="3" fill="#33200f" />
+            <circle cx="117" cy="85" r="3" fill="#33200f" />
             <circle cx="86.2" cy="83.6" r="1" fill="#fff" />
             <circle cx="118.2" cy="83.6" r="1" fill="#fff" />
           </g>
 
           {/* nose */}
-          <path d="M100 88 q2 8 -1 13 q-2 2 -4 1" stroke="#dca77e" strokeWidth="2" fill="none" strokeLinecap="round" />
+          <path d="M100 88 q2 8 -1 13 q-2 2 -4 1" stroke="#d9a077" strokeWidth="2" fill="none" strokeLinecap="round" />
 
           {/* blush */}
-          <circle cx="76" cy="100" r="7" fill={blush} />
-          <circle cx="124" cy="100" r="7" fill={blush} />
-
-          {/* warm smile */}
-          <path d="M89 112 q11 9 22 0" stroke="#a24d3a" strokeWidth="2.6" fill="none" strokeLinecap="round" />
+          <circle cx="76" cy="100" r="7" fill={`url(#mo-blush-${u})`} />
+          <circle cx="124" cy="100" r="7" fill={`url(#mo-blush-${u})`} />
         </g>
       </g>
     </svg>

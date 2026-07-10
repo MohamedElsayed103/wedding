@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLang } from "@/hooks/useLang";
 
 /** A graceful monogram loader while fonts settle. Locks scroll until ready. */
 export function Preloader() {
   const [done, setDone] = useState(false);
+  const { t } = useLang();
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +70,7 @@ export function Preloader() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="mt-6 font-script text-xl text-[color:var(--color-gold-deep)]"
           >
-            a love story unfolds…
+            {t.tagline}
           </motion.p>
         </motion.div>
       )}

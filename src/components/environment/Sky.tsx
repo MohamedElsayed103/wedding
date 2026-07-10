@@ -2,68 +2,59 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useProgressEffect } from "@/hooks/useScroll";
-import { clamp, lerp, mix, seededRandom } from "@/lib/utils";
+import { clamp, seededRandom } from "@/lib/utils";
 
-/** Time-of-day keyframes across the film's progress (0..1). */
+/**
+ * Time-of-day keyframes across the film's progress (0..1).
+ *
+ * PERFORMANCE NOTE: rewriting a full-screen `background: linear-gradient(...)`
+ * every scroll frame forces a full-screen repaint per frame — the single
+ * biggest FPS killer on phones. Instead we stack two fixed gradient layers
+ * and crossfade the top one's OPACITY (compositor-only). Gradient strings are
+ * only rewritten when scroll crosses into a new segment (a handful of times
+ * across the whole film).
+ */
 interface SkyStop {
   at: number;
   top: string;
   mid: string;
   bot: string;
-  sun: string; // sun/moon colour
   sunY: number; // 0 = top, 1 = horizon
   glow: number; // ambient warm glow strength 0..1
   stars: number; // starfield opacity 0..1
+  dusk: number; // warm/orange sun tint 0..1
 }
 
 const SKY: SkyStop[] = [
-  // Soft morning
-  { at: 0.0, top: "#cfe1ea", mid: "#e9eede", bot: "#f7f0e2", sun: "#fff4d6", sunY: 0.22, glow: 0.25, stars: 0 },
-  { at: 0.2, top: "#cfe3e6", mid: "#eef0e0", bot: "#f8f1e3", sun: "#fff2cf", sunY: 0.18, glow: 0.35, stars: 0 },
-  // Warm midday
-  { at: 0.42, top: "#dfe6d6", mid: "#f2ecd8", bot: "#faf2e1", sun: "#ffedbf", sunY: 0.24, glow: 0.5, stars: 0 },
-  // Golden hour — transformation
-  { at: 0.62, top: "#e8c99a", mid: "#f3d9ab", bot: "#f6e6c4", sun: "#ffcf87", sunY: 0.52, glow: 0.9, stars: 0.05 },
-  // Dusk
-  { at: 0.78, top: "#a98a86", mid: "#d9b593", bot: "#eccfa5", sun: "#ff9d6b", sunY: 0.74, glow: 0.7, stars: 0.25 },
-  // Twilight
-  { at: 0.9, top: "#4a4a63", mid: "#7d6d78", bot: "#bfa07f", sun: "#ffd9a0", sunY: 0.9, glow: 0.4, stars: 0.7 },
-  // Night
-  { at: 1.0, top: "#2b2c44", mid: "#3f3d54", bot: "#6a5b5a", sun: "#f4ecd6", sunY: 0.2, glow: 0.3, stars: 1 },
+  { at: 0.0, top: "#cfe1ea", mid: "#e9eede", bot: "#f7f0e2", sunY: 0.22, glow: 0.25, stars: 0, dusk: 0 },
+  { at: 0.2, top: "#cfe3e6", mid: "#eef0e0", bot: "#f8f1e3", sunY: 0.18, glow: 0.35, stars: 0, dusk: 0 },
+  { at: 0.42, top: "#dfe6d6", mid: "#f2ecd8", bot: "#faf2e1", sunY: 0.24, glow: 0.5, stars: 0, dusk: 0.15 },
+  { at: 0.62, top: "#e8c99a", mid: "#f3d9ab", bot: "#f6e6c4", sunY: 0.52, glow: 0.9, stars: 0.05, dusk: 0.7 },
+  { at: 0.78, top: "#a98a86", mid: "#d9b593", bot: "#eccfa5", sunY: 0.74, glow: 0.7, stars: 0.25, dusk: 1 },
+  { at: 0.9, top: "#4a4a63", mid: "#7d6d78", bot: "#bfa07f", sunY: 0.9, glow: 0.4, stars: 0.7, dusk: 0.6 },
+  { at: 1.0, top: "#2b2c44", mid: "#3f3d54", bot: "#6a5b5a", sunY: 0.2, glow: 0.3, stars: 1, dusk: 0 },
 ];
 
-function sample(p: number): SkyStop {
-  let a = SKY[0];
-  let b = SKY[SKY.length - 1];
+const gradientOf = (s: SkyStop) =>
+  `linear-gradient(180deg, ${s.top} 0%, ${s.mid} 52%, ${s.bot} 100%)`;
+
+/** Find the segment index i such that SKY[i].at <= p <= SKY[i+1].at. */
+function segmentAt(p: number): number {
   for (let i = 0; i < SKY.length - 1; i++) {
-    if (p >= SKY[i].at && p <= SKY[i + 1].at) {
-      a = SKY[i];
-      b = SKY[i + 1];
-      break;
-    }
+    if (p <= SKY[i + 1].at) return i;
   }
-  const span = b.at - a.at || 1;
-  const t = clamp((p - a.at) / span);
-  return {
-    at: p,
-    top: mix(a.top, b.top, t),
-    mid: mix(a.mid, b.mid, t),
-    bot: mix(a.bot, b.bot, t),
-    sun: mix(a.sun, b.sun, t),
-    sunY: lerp(a.sunY, b.sunY, t),
-    glow: lerp(a.glow, b.glow, t),
-    stars: lerp(a.stars, b.stars, t),
-  };
+  return SKY.length - 2;
 }
 
 export function Sky() {
-  const gradRef = useRef<HTMLDivElement>(null);
+  const baseRef = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
   const sunRef = useRef<HTMLDivElement>(null);
+  const sunDuskRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
+  const segRef = useRef(-1);
 
-  // Fewer stars than before — the starfield is only ever glimpsed at dusk/night
-  // and each one is a permanently-animating element while mounted.
   const stars = useMemo(() => {
     const rnd = seededRandom(1337);
     const r2 = (n: number) => Math.round(n * 100) / 100;
@@ -77,23 +68,36 @@ export function Sky() {
     }));
   }, []);
 
-  // Stars/clouds are only ever visible near the edges of the film — don't
-  // pay for their (many) infinite CSS animations while fully transparent.
   const [starsVisible, setStarsVisible] = useState(false);
   const [cloudsVisible, setCloudsVisible] = useState(true);
 
   useProgressEffect((p) => {
-    const s = sample(p);
-    if (gradRef.current) {
-      gradRef.current.style.background = `linear-gradient(180deg, ${s.top} 0%, ${s.mid} 52%, ${s.bot} 100%)`;
+    const i = segmentAt(p);
+    const a = SKY[i];
+    const b = SKY[i + 1];
+    const t = clamp((p - a.at) / (b.at - a.at || 1));
+
+    // Rewrite gradients only on segment change (rare, one-time paint).
+    if (segRef.current !== i) {
+      segRef.current = i;
+      if (baseRef.current) baseRef.current.style.background = gradientOf(a);
+      if (fadeRef.current) fadeRef.current.style.background = gradientOf(b);
     }
-    if (sunRef.current) {
-      sunRef.current.style.top = `${s.sunY * 62 + 4}%`;
-      sunRef.current.style.background = `radial-gradient(circle, ${s.sun} 0%, transparent 68%)`;
-      sunRef.current.style.transform = `translateX(-50%) translateX(${(p - 0.5) * 26}vw)`;
+    // Continuous per-frame work: opacity + transform only.
+    if (fadeRef.current) fadeRef.current.style.opacity = t.toFixed(3);
+
+    const sunY = a.sunY + (b.sunY - a.sunY) * t;
+    const dusk = a.dusk + (b.dusk - a.dusk) * t;
+    const sunTransform = `translate(-50%, 0) translate(${((p - 0.5) * 26).toFixed(2)}vw, ${(sunY * 62 + 4).toFixed(2)}vh)`;
+    if (sunRef.current) sunRef.current.style.transform = sunTransform;
+    if (sunDuskRef.current) {
+      sunDuskRef.current.style.transform = sunTransform;
+      sunDuskRef.current.style.opacity = dusk.toFixed(3);
     }
-    if (glowRef.current) glowRef.current.style.opacity = String(s.glow);
-    if (starsRef.current) starsRef.current.style.opacity = String(s.stars);
+    if (glowRef.current)
+      glowRef.current.style.opacity = (a.glow + (b.glow - a.glow) * t).toFixed(3);
+    if (starsRef.current)
+      starsRef.current.style.opacity = (a.stars + (b.stars - a.stars) * t).toFixed(3);
 
     setStarsVisible((v) => (p > 0.55 ? true : p < 0.5 ? false : v));
     setCloudsVisible((v) => (p < 0.78 ? true : p > 0.82 ? false : v));
@@ -101,13 +105,32 @@ export function Sky() {
 
   return (
     <div className="fixed inset-0 -z-30 overflow-hidden" aria-hidden>
-      <div ref={gradRef} className="absolute inset-0" />
+      {/* two stacked gradients — only the top layer's opacity animates */}
+      <div ref={baseRef} className="absolute inset-0" style={{ background: gradientOf(SKY[0]) }} />
+      <div
+        ref={fadeRef}
+        className="absolute inset-0"
+        style={{ background: gradientOf(SKY[1]), opacity: 0, willChange: "opacity" }}
+      />
 
-      {/* Sun / moon */}
+      {/* Sun — warm daylight disc + a dusk-orange twin crossfaded above it.
+          Both move with transform only. */}
       <div
         ref={sunRef}
-        className="absolute left-1/2 h-[46vmin] w-[46vmin] rounded-full blur-[2px]"
-        style={{ background: "radial-gradient(circle, #fff4d6, #fff4d600 68%)" }}
+        className="absolute left-1/2 top-0 h-[46vmin] w-[46vmin] rounded-full"
+        style={{
+          background: "radial-gradient(circle, #fff2cf 0%, transparent 68%)",
+          willChange: "transform",
+        }}
+      />
+      <div
+        ref={sunDuskRef}
+        className="absolute left-1/2 top-0 h-[46vmin] w-[46vmin] rounded-full"
+        style={{
+          background: "radial-gradient(circle, #ffb877 0%, transparent 68%)",
+          opacity: 0,
+          willChange: "transform, opacity",
+        }}
       />
 
       {/* Warm ambient glow from the horizon */}
@@ -121,7 +144,7 @@ export function Sky() {
         }}
       />
 
-      {/* Starfield (fades in at night; unmounted otherwise to save cycles) */}
+      {/* Starfield (mounted only near night) */}
       <div ref={starsRef} className="absolute inset-0" style={{ opacity: 0 }}>
         {starsVisible &&
           stars.map((st) => (
@@ -151,14 +174,13 @@ function Clouds() {
   const cloudsRef = useRef<HTMLDivElement>(null);
   useProgressEffect((p) => {
     if (cloudsRef.current) {
-      // Clouds thin out toward night.
       cloudsRef.current.style.opacity = String(clamp(1 - p * 1.25) * 0.8);
     }
   });
   const clouds = useMemo(() => {
     const rnd = seededRandom(88);
     const r2 = (n: number) => Math.round(n * 100) / 100;
-    return Array.from({ length: 5 }, (_, i) => ({
+    return Array.from({ length: 4 }, (_, i) => ({
       id: i,
       top: r2(6 + rnd() * 34),
       scale: r2(0.7 + rnd() * 0.9),

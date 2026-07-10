@@ -6,7 +6,8 @@ import { Couple } from "@/components/characters/Couple";
 import { GardenGround } from "@/components/environment/GardenGround";
 import { Flower } from "@/components/environment/GardenElements";
 import { useDeviceTier } from "@/hooks/useDeviceTier";
-import { MEMORIES, type Memory } from "@/lib/constants";
+import { type Memory } from "@/lib/i18n";
+import { useLang } from "@/hooks/useLang";
 import { seededRandom } from "@/lib/utils";
 
 /**
@@ -29,6 +30,8 @@ export function Journey() {
   );
   const coupleY = useTransform(scrollYProgress, [0, 1], ["2%", "-2%"]);
 
+  const { t } = useLang();
+  const memories = t.memories;
   const { density } = useDeviceTier();
   const flowerCount = Math.max(6, Math.round(14 * density));
   const pathFlowers = (() => {
@@ -46,7 +49,7 @@ export function Journey() {
     <section
       ref={ref}
       className="relative"
-      style={{ height: `${MEMORIES.length * 50 + 30}svh` }}
+      style={{ height: `${memories.length * 60 + 40}svh` }}
     >
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         {/* moving flower path — the ground slides by as they walk forward */}
@@ -70,17 +73,17 @@ export function Journey() {
           style={{ scale: coupleScale, y: coupleY }}
           className="absolute bottom-[16%] left-1/2 z-10 h-[40vh] max-h-[400px] min-h-[230px] -translate-x-1/2"
         >
-          <Couple outfit="casual" walking lookingAtEachOther className="h-full" />
+          <Couple walking lookingAtEachOther className="h-full" />
         </motion.div>
 
         {/* memories fade in along the way */}
-        {MEMORIES.map((m, i) => (
+        {memories.map((m, i) => (
           <MemoryCard
             key={m.id}
             memory={m}
             progress={scrollYProgress}
             index={i}
-            total={MEMORIES.length}
+            total={memories.length}
           />
         ))}
 
