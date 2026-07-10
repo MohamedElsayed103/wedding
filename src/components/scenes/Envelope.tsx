@@ -167,9 +167,16 @@ export function Envelope() {
                   </div>
                 )}
 
-                {/* Letter that lifts out — gold-foil framed */}
+                {/* Letter that lifts out — gold-foil framed. z-index must
+                    clear the pocket + seam layers below (z-index: 3) and the
+                    opened flap (z-index: 1), otherwise their diagonal clip
+                    paths paint over the letter as it rises, cutting it off.
+                    pointer-events is always "none": while closed the letter
+                    is invisible but still occupies this space, and without
+                    this it silently steals the click meant to open the
+                    envelope (the seal sits underneath, at the same spot). */}
                 <motion.div
-                  className="absolute left-1/2 top-1/2 rounded-lg"
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-10 rounded-lg"
                   style={{
                     width: "90%",
                     height: "118%",
@@ -183,7 +190,7 @@ export function Envelope() {
                   initial={false}
                   animate={
                     opened
-                      ? { y: "-78%", opacity: 1, backgroundPosition: "200% center" }
+                      ? { y: "-84%", opacity: 1, backgroundPosition: "200% center" }
                       : { y: "-50%", opacity: 0 }
                   }
                   transition={{
