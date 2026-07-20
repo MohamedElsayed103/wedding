@@ -18,8 +18,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
-.env
+#.env*.local
+#.env
 
 # typescript
 *.tsbuildinfo
@@ -27,6 +27,10 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# admin local data store (see src/lib/admin/store.ts — swap for a real DB
+# before deploying the admin tool to production)
+/.data
 
 # IDE
 .vscode/*

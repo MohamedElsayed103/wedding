@@ -3,33 +3,61 @@
 import { cx } from "@/lib/utils";
 
 export type Attire = "signature" | "ceremony";
+export type SkinTone = "fair" | "medium" | "tan";
+export type OutfitPalette = "champagne" | "rose" | "sage";
 
 interface Props {
   className?: string;
   facing?: "left" | "right" | "front";
   animate?: boolean;
-  /** "signature" = champagne satin like the photo; "ceremony" = white gown. */
+  /** "signature" = satin hijab/dress like the photo; "ceremony" = white gown (fixed). */
   attire?: Attire;
+  skinTone?: SkinTone;
+  /** Colorway for the signature satin — ceremony is always luminous white. */
+  outfitPalette?: OutfitPalette;
 }
+
+const SKIN: Record<SkinTone, { a: string; b: string; blush: string; blushOpacity: number }> = {
+  fair: { a: "#f8dabd", b: "#efc59e", blush: "#ef9880", blushOpacity: 0.55 },
+  medium: { a: "#e0b183", b: "#c99569", blush: "#d67e5c", blushOpacity: 0.5 },
+  tan: { a: "#c38f60", b: "#a37246", blush: "#b56646", blushOpacity: 0.42 },
+};
+
+const PALETTE: Record<OutfitPalette, { hijabA: string; hijabB: string; dressA: string; dressB: string; dressC: string; outline: string; fold: string }> = {
+  champagne: { hijabA: "#eed7ba", hijabB: "#c3a077", dressA: "#ecd4b5", dressB: "#d9ba90", dressC: "#bd9a6e", outline: "#8f7350", fold: "#a98a62" },
+  rose: { hijabA: "#f0d3c8", hijabB: "#cf9a86", dressA: "#f2d6c9", dressB: "#dba792", dressC: "#b97c62", outline: "#9c7261", fold: "#b98a72" },
+  sage: { hijabA: "#dbe2c9", hijabB: "#9aa87f", dressA: "#dde3ca", dressB: "#b7c193", dressC: "#8b9968", outline: "#7c8a63", fold: "#96a578" },
+};
+
+const CEREMONY_PALETTE = { hijabA: "#fefcf7", hijabB: "#ddd2bd", dressA: "#fefcf7", dressB: "#f0e8d6", dressC: "#ddd0b6", outline: "#b8a88e", fold: "#cbbda4" };
 
 /**
  * Mariam — modelled on the engagement photo: satin hijab draped over the
  * shoulders, matching pearl-beaded satin dress, soft smile. The finale swaps
- * to a luminous white bridal gown. Deeper satin shading + a rim glow keep
- * her clearly readable against the cream garden backdrop.
+ * to a luminous white bridal gown. skinTone and outfitPalette are parametric
+ * (see BUSINESS_PLAN.md §4 Phase A) so new "looks" are a config choice, not
+ * new artwork.
  */
 export function Mariam({
   className,
   facing = "front",
   animate = true,
   attire = "signature",
+  skinTone = "fair",
+  outfitPalette = "champagne",
 }: Props) {
   const flip = facing === "left" ? -1 : 1;
   const cer = attire === "ceremony";
-  // Scope gradient ids per attire — both attires render in one document.
-  const u = cer ? "c" : "s";
-  const outline = cer ? "#b8a88e" : "#8f7350";
-  const fold = cer ? "#cbbda4" : "#a98a62";
+  // Scope gradient ids by the full combination — many may render together
+  // on one page (e.g. the admin cast-library browser).
+  const toneKey = skinTone[0];
+  const paletteKey = cer ? "k" : outfitPalette[0];
+  const u = `${cer ? "c" : "s"}${toneKey}${paletteKey}`;
+
+  const skin = SKIN[skinTone];
+  const pal = cer ? CEREMONY_PALETTE : PALETTE[outfitPalette];
+  const outline = pal.outline;
+  const fold = pal.fold;
 
   return (
     <svg
@@ -41,22 +69,21 @@ export function Mariam({
     >
       <defs>
         <linearGradient id={`ma-skin-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f8dabd" />
-          <stop offset="1" stopColor="#efc59e" />
+          <stop offset="0" stopColor={skin.a} />
+          <stop offset="1" stopColor={skin.b} />
         </linearGradient>
-        {/* champagne satin (photo) or luminous white bridal satin (ceremony) */}
         <linearGradient id={`ma-hijab-${u}`} x1="0" y1="0" x2="0.4" y2="1">
-          <stop offset="0" stopColor={cer ? "#fefcf7" : "#eed7ba"} />
-          <stop offset="1" stopColor={cer ? "#ddd2bd" : "#c3a077"} />
+          <stop offset="0" stopColor={pal.hijabA} />
+          <stop offset="1" stopColor={pal.hijabB} />
         </linearGradient>
         <linearGradient id={`ma-dress-${u}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={cer ? "#fefcf7" : "#ecd4b5"} />
-          <stop offset="0.6" stopColor={cer ? "#f0e8d6" : "#d9ba90"} />
-          <stop offset="1" stopColor={cer ? "#ddd0b6" : "#bd9a6e"} />
+          <stop offset="0" stopColor={pal.dressA} />
+          <stop offset="0.6" stopColor={pal.dressB} />
+          <stop offset="1" stopColor={pal.dressC} />
         </linearGradient>
         <radialGradient id={`ma-blush-${u}`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#ef9880" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#ef9880" stopOpacity="0" />
+          <stop offset="0" stopColor={skin.blush} stopOpacity={skin.blushOpacity} />
+          <stop offset="1" stopColor={skin.blush} stopOpacity="0" />
         </radialGradient>
         <radialGradient id={`ma-rim-${u}`} cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor={cer ? "#e8ce8f" : "#fffdf6"} stopOpacity="0.55" />

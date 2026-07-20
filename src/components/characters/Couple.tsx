@@ -1,8 +1,8 @@
 "use client";
 
 import { cx } from "@/lib/utils";
-import { Mohamed } from "./Mohamed";
-import { Mariam } from "./Mariam";
+import { Mohamed, type SkinTone as MohamedSkinTone, type OutfitPalette as MohamedPalette, type BeardStyle } from "./Mohamed";
+import { Mariam, type SkinTone as MariamSkinTone, type OutfitPalette as MariamPalette } from "./Mariam";
 
 interface Props {
   walking?: boolean;
@@ -10,6 +10,11 @@ interface Props {
   lookingAtEachOther?: boolean;
   className?: string;
   animate?: boolean;
+  groomSkinTone?: MohamedSkinTone;
+  groomPalette?: MohamedPalette;
+  groomBeard?: BeardStyle;
+  brideSkinTone?: MariamSkinTone;
+  bridePalette?: MariamPalette;
 }
 
 /**
@@ -22,6 +27,11 @@ export function Couple({
   lookingAtEachOther = true,
   className,
   animate = true,
+  groomSkinTone,
+  groomPalette,
+  groomBeard,
+  brideSkinTone,
+  bridePalette,
 }: Props) {
   return (
     <div className={cx("relative flex items-end justify-center gap-2 sm:gap-4", className)}>
@@ -31,6 +41,9 @@ export function Couple({
       >
         <Mohamed
           attire={attire}
+          skinTone={groomSkinTone}
+          outfitPalette={groomPalette}
+          beardStyle={groomBeard}
           facing={lookingAtEachOther ? "right" : "front"}
           animate={animate}
           className="h-full"
@@ -57,6 +70,8 @@ export function Couple({
       >
         <Mariam
           attire={attire}
+          skinTone={brideSkinTone}
+          outfitPalette={bridePalette}
           facing={lookingAtEachOther ? "left" : "front"}
           animate={animate}
           className="h-full"

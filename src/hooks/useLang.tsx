@@ -13,7 +13,7 @@ import { DICT, type Lang, type Strings } from "@/lib/i18n";
 
 interface LangCtx {
   lang: Lang;
-  /** false until the visitor has chosen (or a stored choice was found). */
+  /** false until the visitor has chosen a language this visit. */
   ready: boolean;
   t: Strings;
   choose: (lang: Lang) => void;
@@ -28,24 +28,15 @@ const Ctx = createContext<LangCtx>({
 
 export const useLang = () => useContext(Ctx);
 
-const STORAGE_KEY = "mm-lang";
-
+/**
+ * No persistence by design: the language gate is meant to greet every guest
+ * on every visit (a couple's family may share one device, or a guest may
+ * revisit later expecting the choice screen again), so nothing is written to
+ * localStorage/cookies here — a refresh always re-asks.
+ */
 export function LangProvider({ children }: { children: ReactNode }) {
-  // SSR renders English; a stored choice is applied right after mount.
   const [lang, setLang] = useState<Lang>("en");
   const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === "en" || stored === "ar") {
-        setLang(stored);
-        setReady(true);
-      }
-    } catch {
-      /* storage unavailable — keep the gate */
-    }
-  }, []);
 
   // Reflect language + direction on <html> so CSS/RTL follow along.
   useEffect(() => {
@@ -56,11 +47,6 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const choose = useCallback((l: Lang) => {
     setLang(l);
     setReady(true);
-    try {
-      localStorage.setItem(STORAGE_KEY, l);
-    } catch {
-      /* fine */
-    }
   }, []);
 
   const value = useMemo<LangCtx>(
