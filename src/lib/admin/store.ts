@@ -1,198 +1,190 @@
-/**
- * Storage for the admin tool. Node-runtime only (uses `fs`) — never import
- * this from a client component or from Edge middleware.
- *
- * TODAY: a single JSON file under `.data/` (gitignored). This is fine for
- * local development and for a single always-on Node server, but Vercel's
- * serverless functions have an ephemeral, per-invocation filesystem — writes
- * here will NOT reliably persist or be shared across requests once deployed
- * to Vercel. That's fine for building/demoing the admin UI now; before
- * relying on this in production, swap this module for a real database
- * (Postgres via Neon/Supabase, per BUSINESS_PLAN.md §5.1/§5.2) — every
- * function below is written as a small, swappable interface so that's a
- * one-file change, not an admin-UI rewrite.
- */
+import "server-only";
 import { randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import type { AdminData, CharacterLook, MemoryEntry, Site, Template } from "./types";
+import { getServiceClient } from "@/lib/supabase";
+import { DEFAULT_SITE, DEFAULT_TEMPLATES } from "./defaults";
+import type { Site, Template } from "./types";
 
-const DATA_DIR = join(process.cwd(), ".data");
-const DATA_FILE = join(DATA_DIR, "admin-store.json");
+/**
+ * Data access for the admin tool + public site, backed by Supabase Postgres.
+ *
+ * Each row is `{ id, slug?, status?, data: <full object>, created_at, updated_at }`.
+ * We mirror a few queryable fields (slug/status) into columns and keep the
+ * canonical object in `data` (jsonb) so the app reads/writes whole typed
+ * objects. All access is server-side with the secret key.
+ */
 
-function seed(): AdminData {
-  const now = new Date().toISOString();
-  const template: Template = {
-    id: "classic-garden",
-    name: "Classic Garden",
-    description: "The original ivory & gold enchanted-garden film — envelope, calligraphy, journey, invitation, countdown, venue, finale.",
-    accentColor: "#c9a24b",
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  const memories: MemoryEntry[] = [
-    {
-      id: "met",
-      icon: "✦",
-      title_en: "The First Hello",
-      title_ar: "اللقاء الأول",
-      caption_en: "Two strangers, one glance — and the garden held its breath.",
-      caption_ar: "غريبان ونظرة واحدة — فحبست الحديقة أنفاسها.",
-    },
-    {
-      id: "laughter",
-      icon: "❀",
-      title_en: "A Thousand Small Laughs",
-      title_ar: "ألف ضحكة صغيرة",
-      caption_en: "Ordinary days turned golden simply because we shared them.",
-      caption_ar: "أيامٌ عادية صارت ذهبية لأننا عشناها معًا.",
-    },
-    {
-      id: "promise",
-      icon: "☾",
-      title_en: "The Quiet Promise",
-      title_ar: "الوعد الهادئ",
-      caption_en: "Beneath the olive branches, forever began to feel possible.",
-      caption_ar: "تحت أغصان الزيتون، بدأ الأبد يبدو ممكنًا.",
-    },
-  ];
-
-  const groomLook: CharacterLook = { skinTone: "fair", outfitPalette: "espresso", beardStyle: "short" };
-  const brideLook: CharacterLook = { skinTone: "fair", outfitPalette: "champagne" };
-
-  const site: Site = {
-    id: "mohamed-mariam",
-    slug: "mohamed-mariam",
-    status: "live",
-    planTier: "bespoke",
-    templateId: template.id,
-    groomName_en: "Mohamed",
-    groomName_ar: "محمد",
-    brideName_en: "Mariam",
-    brideName_ar: "مريم",
-    weddingDate: "2026-08-27T17:00:00",
-    dateLabel_en: "27 August 2026",
-    dateLabel_ar: "27 أغسطس 2026",
-    dateDots: "27 • 08 • 2026",
-    venueName_en: "Al-Farouq Mosque",
-    venueName_ar: "مسجد الفاروق",
-    venueCity_en: "Sheraton, Cairo",
-    venueCity_ar: "شيراتون، القاهرة",
-    venueMapsUrl: "https://maps.app.goo.gl/PD77uVEepFmj6sNx5",
-    defaultLanguage: "en",
-    memories,
-    groomLook,
-    brideLook,
-    notes: "This is the flagship/portfolio site — the one this whole product was built for.",
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  return { sites: [site], templates: [template] };
-}
-
-function ensureFile(): void {
-  if (!existsSync(DATA_FILE)) {
-    mkdirSync(dirname(DATA_FILE), { recursive: true });
-    writeFileSync(DATA_FILE, JSON.stringify(seed(), null, 2), "utf8");
-  }
-}
-
-function read(): AdminData {
-  ensureFile();
-  const raw = readFileSync(DATA_FILE, "utf8");
-  return JSON.parse(raw) as AdminData;
-}
-
-function write(data: AdminData): void {
-  mkdirSync(DATA_DIR, { recursive: true });
-  writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
+/**
+ * Race a query against a short timeout so a paused/slow database never hangs
+ * a guest-facing page — the caller falls back to defaults instead.
+ */
+function withTimeout<T>(p: PromiseLike<T>, ms = 3000): Promise<T> {
+  return Promise.race([
+    Promise.resolve(p),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error("db-timeout")), ms)),
+  ]);
 }
 
 // ---- Sites ----
 
-export function listSites(): Site[] {
-  return read().sites;
+export async function listSites(): Promise<Site[]> {
+  const sb = getServiceClient();
+  const { data, error } = await sb
+    .from("sites")
+    .select("data")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => r.data as Site);
 }
 
-export function getSite(id: string): Site | undefined {
-  return read().sites.find((s) => s.id === id);
+export async function getSite(id: string): Promise<Site | undefined> {
+  const sb = getServiceClient();
+  const { data, error } = await sb.from("sites").select("data").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return (data?.data as Site) ?? undefined;
 }
 
-export function getSiteBySlug(slug: string): Site | undefined {
-  return read().sites.find((s) => s.slug === slug);
+export async function getSiteBySlug(slug: string): Promise<Site | undefined> {
+  const sb = getServiceClient();
+  const { data, error } = await withTimeout(sb.from("sites").select("data").eq("slug", slug).maybeSingle());
+  if (error) throw error;
+  return (data?.data as Site) ?? undefined;
 }
 
-export function getPrimarySite(): Site | undefined {
-  const data = read();
-  return data.sites.find((s) => s.status === "live") ?? data.sites[0];
+/** The site the public "/" renders: the first live site, else the newest. */
+export async function getPrimarySite(): Promise<Site | undefined> {
+  const sb = getServiceClient();
+  const { data, error } = await withTimeout(
+    sb.from("sites").select("data,status,created_at").order("created_at", { ascending: true })
+  );
+  if (error) throw error;
+  const rows = (data ?? []) as { data: Site; status: string }[];
+  const live = rows.find((r) => r.status === "live");
+  return (live ?? rows[0])?.data;
 }
 
 export type NewSiteInput = Omit<Site, "id" | "createdAt" | "updatedAt">;
 
-export function createSite(input: NewSiteInput): Site {
-  const data = read();
+export async function createSite(input: NewSiteInput): Promise<Site> {
+  const sb = getServiceClient();
   const now = new Date().toISOString();
   const site: Site = { ...input, id: randomUUID(), createdAt: now, updatedAt: now };
-  data.sites.push(site);
-  write(data);
+  const { error } = await sb.from("sites").insert({
+    id: site.id,
+    slug: site.slug,
+    status: site.status,
+    data: site,
+    created_at: now,
+    updated_at: now,
+  });
+  if (error) throw error;
   return site;
 }
 
-export function updateSite(id: string, patch: Partial<NewSiteInput>): Site | undefined {
-  const data = read();
-  const idx = data.sites.findIndex((s) => s.id === id);
-  if (idx === -1) return undefined;
-  const updated: Site = { ...data.sites[idx], ...patch, id, updatedAt: new Date().toISOString() };
-  data.sites[idx] = updated;
-  write(data);
+export async function updateSite(id: string, patch: Partial<NewSiteInput>): Promise<Site | undefined> {
+  const existing = await getSite(id);
+  if (!existing) return undefined;
+  const now = new Date().toISOString();
+  const updated: Site = { ...existing, ...patch, id, updatedAt: now };
+  const sb = getServiceClient();
+  const { error } = await sb
+    .from("sites")
+    .update({ slug: updated.slug, status: updated.status, data: updated, updated_at: now })
+    .eq("id", id);
+  if (error) throw error;
   return updated;
 }
 
-export function deleteSite(id: string): boolean {
-  const data = read();
-  const before = data.sites.length;
-  data.sites = data.sites.filter((s) => s.id !== id);
-  write(data);
-  return data.sites.length < before;
+export async function deleteSite(id: string): Promise<boolean> {
+  const sb = getServiceClient();
+  const { error, count } = await sb.from("sites").delete({ count: "exact" }).eq("id", id);
+  if (error) throw error;
+  return (count ?? 0) > 0;
 }
 
 // ---- Templates ----
 
-export function listTemplates(): Template[] {
-  return read().templates;
+export async function listTemplates(): Promise<Template[]> {
+  const sb = getServiceClient();
+  const { data, error } = await sb
+    .from("templates")
+    .select("data")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => r.data as Template);
 }
 
-export function getTemplate(id: string): Template | undefined {
-  return read().templates.find((t) => t.id === id);
+export async function getTemplate(id: string): Promise<Template | undefined> {
+  const sb = getServiceClient();
+  const { data, error } = await withTimeout(sb.from("templates").select("data").eq("id", id).maybeSingle());
+  if (error) throw error;
+  return (data?.data as Template) ?? undefined;
 }
 
 export type NewTemplateInput = Omit<Template, "id" | "createdAt" | "updatedAt">;
 
-export function createTemplate(input: NewTemplateInput): Template {
-  const data = read();
+export async function createTemplate(input: NewTemplateInput): Promise<Template> {
+  const sb = getServiceClient();
   const now = new Date().toISOString();
   const template: Template = { ...input, id: randomUUID(), createdAt: now, updatedAt: now };
-  data.templates.push(template);
-  write(data);
+  const { error } = await sb.from("templates").insert({
+    id: template.id,
+    data: template,
+    created_at: now,
+    updated_at: now,
+  });
+  if (error) throw error;
   return template;
 }
 
-export function updateTemplate(id: string, patch: Partial<NewTemplateInput>): Template | undefined {
-  const data = read();
-  const idx = data.templates.findIndex((t) => t.id === id);
-  if (idx === -1) return undefined;
-  const updated: Template = { ...data.templates[idx], ...patch, id, updatedAt: new Date().toISOString() };
-  data.templates[idx] = updated;
-  write(data);
+export async function updateTemplate(id: string, patch: Partial<NewTemplateInput>): Promise<Template | undefined> {
+  const existing = await getTemplate(id);
+  if (!existing) return undefined;
+  const now = new Date().toISOString();
+  const updated: Template = { ...existing, ...patch, id, updatedAt: now };
+  const sb = getServiceClient();
+  const { error } = await sb.from("templates").update({ data: updated, updated_at: now }).eq("id", id);
+  if (error) throw error;
   return updated;
 }
 
-export function deleteTemplate(id: string): boolean {
-  const data = read();
-  const before = data.templates.length;
-  data.templates = data.templates.filter((t) => t.id !== id);
-  write(data);
-  return data.templates.length < before;
+export async function deleteTemplate(id: string): Promise<boolean> {
+  const sb = getServiceClient();
+  const { error, count } = await sb.from("templates").delete({ count: "exact" }).eq("id", id);
+  if (error) throw error;
+  return (count ?? 0) > 0;
+}
+
+// ---- Seeding ----
+
+/** Insert the flagship site + template if the tables are empty. Idempotent. */
+export async function seedIfEmpty(): Promise<{ seeded: boolean }> {
+  const sb = getServiceClient();
+  const [{ count: siteCount }, { count: templateCount }] = await Promise.all([
+    sb.from("sites").select("id", { count: "exact", head: true }),
+    sb.from("templates").select("id", { count: "exact", head: true }),
+  ]);
+  let seeded = false;
+  if ((templateCount ?? 0) === 0) {
+    await sb.from("templates").insert(
+      DEFAULT_TEMPLATES.map((tpl) => ({
+        id: tpl.id,
+        data: tpl,
+        created_at: tpl.createdAt,
+        updated_at: tpl.updatedAt,
+      }))
+    );
+    seeded = true;
+  }
+  if ((siteCount ?? 0) === 0) {
+    await sb.from("sites").insert({
+      id: DEFAULT_SITE.id,
+      slug: DEFAULT_SITE.slug,
+      status: DEFAULT_SITE.status,
+      data: DEFAULT_SITE,
+      created_at: DEFAULT_SITE.createdAt,
+      updated_at: DEFAULT_SITE.updatedAt,
+    });
+    seeded = true;
+  }
+  return { seeded };
 }

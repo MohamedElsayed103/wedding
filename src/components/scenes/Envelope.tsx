@@ -16,7 +16,7 @@ export function Envelope() {
   const [opened, setOpened] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const { scrollTo } = useLenis();
+  const { scrollTo, unlockScroll } = useLenis();
   const { t, ready } = useLang();
   const tiltRef = useRef<HTMLDivElement>(null);
 
@@ -33,12 +33,16 @@ export function Envelope() {
     };
   }, [opened, ready]);
 
-  // After the letter has been admired, zoom the camera through it.
+  // After the letter has been admired, zoom the camera through it — and only
+  // now release the scroll lock so the visitor can continue into the story.
   useEffect(() => {
     if (!opened) return;
-    const id = setTimeout(() => setDismissed(true), 2100);
+    const id = setTimeout(() => {
+      setDismissed(true);
+      unlockScroll();
+    }, 2100);
     return () => clearTimeout(id);
-  }, [opened]);
+  }, [opened, unlockScroll]);
 
   // Subtle 3D tilt on fine pointers only.
   useEffect(() => {

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { listSites, listTemplates } from "@/lib/admin/store";
+import { SeedButton } from "./SeedButton";
 
-export default function AdminDashboard() {
-  const sites = listSites();
-  const templates = listTemplates();
+export default async function AdminDashboard() {
+  const [sites, templates] = await Promise.all([listSites(), listTemplates()]);
 
   const byStatus = (status: string) => sites.filter((s) => s.status === status).length;
 
@@ -45,6 +45,12 @@ export default function AdminDashboard() {
           View all sites
         </Link>
       </div>
+
+      {sites.length === 0 && (
+        <div className="mt-8">
+          <SeedButton />
+        </div>
+      )}
 
       <h2 className="mt-10 text-sm font-semibold text-neutral-700">Recent sites</h2>
       <div className="mt-3 divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">

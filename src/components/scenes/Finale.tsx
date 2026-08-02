@@ -5,8 +5,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Couple } from "@/components/characters/Couple";
 import { FlowerArch } from "@/components/environment/GardenElements";
 import { GardenGround } from "@/components/environment/GardenGround";
-import { WEDDING_DATE_DOTS } from "@/lib/constants";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
@@ -16,6 +16,7 @@ import { Reveal } from "@/components/ui/Reveal";
 export function Finale() {
   const ref = useRef<HTMLElement>(null);
   const { t } = useLang();
+  const { groom, bride, dateDots } = useSite();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
@@ -46,7 +47,7 @@ export function Finale() {
           style={{ scale: coupleScale, y: coupleY, opacity: coupleOpacity }}
           className="absolute bottom-[20%] left-1/2 z-10 h-[46vh] max-h-[440px] min-h-[250px] -translate-x-1/2"
         >
-          <Couple attire="ceremony" walking lookingAtEachOther className="h-full" />
+          <Couple attire="ceremony" walking lookingAtEachOther groomLook={groom} brideLook={bride} className="h-full" />
         </motion.div>
 
         {/* final title */}
@@ -63,7 +64,7 @@ export function Finale() {
             <span>{t.bride}</span>
           </div>
           <p className="mt-4 font-roman tracking-luxe text-xs text-[color:var(--color-gold-light)]">
-            {WEDDING_DATE_DOTS}
+            {dateDots}
           </p>
         </motion.div>
 
@@ -77,7 +78,7 @@ export function Finale() {
             {t.madeWithLove}
           </p>
           <p className="mt-1 font-body text-[0.6rem] tracking-wide-2 text-[color:var(--color-ink-soft)]/70">
-            {t.coupleNames} · {WEDDING_DATE_DOTS}
+            {t.coupleNames} · {dateDots}
           </p>
         </Reveal>
       </div>

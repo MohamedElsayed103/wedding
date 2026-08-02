@@ -4,12 +4,12 @@ import { createTemplate, listTemplates, type NewTemplateInput } from "@/lib/admi
 
 export async function GET() {
   if (!(await isAdminRequest())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  return NextResponse.json(listTemplates());
+  return NextResponse.json(await listTemplates());
 }
 
 export async function POST(req: NextRequest) {
   if (!(await isAdminRequest())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const input = (await req.json()) as NewTemplateInput;
-  const template = createTemplate(input);
+  const template = await createTemplate(input);
   return NextResponse.json(template, { status: 201 });
 }

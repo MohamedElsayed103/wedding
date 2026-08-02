@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (!(await isAdminRequest())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   const patch = (await req.json()) as Partial<NewTemplateInput>;
-  const template = updateTemplate(id, patch);
+  const template = await updateTemplate(id, patch);
   if (!template) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(template);
 }
@@ -18,7 +18,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   if (!(await isAdminRequest())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
-  const ok = deleteTemplate(id);
+  const ok = await deleteTemplate(id);
   if (!ok) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return new NextResponse(null, { status: 204 });
 }

@@ -45,20 +45,21 @@ const amiri = Amiri({
   weight: ["400", "700"],
 });
 
-const SITE_TITLE = "Mohamed & Mariam — 26 August 2026";
+const SITE_TITLE = "Reverie — cinematic wedding invitation films";
 const SITE_DESC =
-  "An interactive animated love story. Journey with Mohamed & Mariam through an enchanted garden to their wedding day — 26 August 2026.";
+  "The invitation is a memory. Reverie turns your love story into a cinematic, illustrated, bilingual invitation film that guests watch instead of skim.";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESC,
-  applicationName: "Mohamed & Mariam Wedding",
-  authors: [{ name: "Mohamed & Mariam" }],
+  applicationName: "Reverie",
+  authors: [{ name: "Reverie" }],
   keywords: [
-    "wedding invitation",
-    "Mohamed and Mariam",
-    "26 August 2026",
-    "animated invitation",
+    "wedding invitation website",
+    "animated wedding invitation",
+    "bilingual wedding invitation",
+    "Arabic wedding invitation",
+    "digital wedding invitation film",
   ],
   openGraph: {
     title: SITE_TITLE,

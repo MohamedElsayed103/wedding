@@ -7,22 +7,21 @@
  * touch the admin UI or the character components at all.
  */
 
+import type { AvatarLook } from "@/components/characters/avatar/types";
+
 export type PlanTier = "signature" | "bespoke" | "studio";
 export type SiteStatus = "draft" | "paid" | "live" | "archived";
 
-export interface CharacterLook {
-  skinTone: "fair" | "medium" | "tan";
-  outfitPalette: string; // validated against the groom/bride palette enums in the UI
-  beardStyle?: "short" | "none"; // groom only
-}
+/** A couple's stored character looks are the full customizable Avatar set. */
+export type CharacterLook = AvatarLook;
 
-export interface MemoryEntry {
+/** One chapter of the couple's story (bilingual). */
+export interface ChapterEntry {
   id: string;
-  icon: string;
-  title_en: string;
-  title_ar: string;
-  caption_en: string;
-  caption_ar: string;
+  label_en: string; // "Chapter Two"
+  label_ar: string; // "الفصل الثاني"
+  text_en: string;
+  text_ar: string;
 }
 
 export interface Site {
@@ -49,7 +48,7 @@ export interface Site {
   venueMapsUrl: string;
 
   defaultLanguage: "en" | "ar";
-  memories: MemoryEntry[];
+  chapters: ChapterEntry[];
 
   groomLook: CharacterLook;
   brideLook: CharacterLook;
@@ -66,6 +65,7 @@ export interface Template {
   name: string;
   description: string;
   accentColor: string; // hex, drives --color-gold override
+  designId: string; // which coded design (layout/animation) this theme renders — see components/designs/registry
   createdAt: string;
   updatedAt: string;
 }

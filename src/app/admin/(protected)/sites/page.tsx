@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { listSites } from "@/lib/admin/store";
 
-export default function SitesListPage() {
-  const sites = listSites();
+export default async function SitesListPage() {
+  const sites = await listSites();
 
   return (
     <div>

@@ -1,15 +1,18 @@
 "use client";
 
+import { useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCountdown } from "@/hooks/useCountdown";
-import { WEDDING_DATE, WEDDING_DATE_DOTS } from "@/lib/constants";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 import { pad2 } from "@/lib/utils";
 
 export function Countdown() {
-  const time = useCountdown(WEDDING_DATE);
   const { t } = useLang();
+  const { weddingDate, dateDots } = useSite();
+  const target = useMemo(() => new Date(weddingDate), [weddingDate]);
+  const time = useCountdown(target);
 
   const units = [
     { label: t.days, value: time?.days ?? 0 },
@@ -61,7 +64,7 @@ export function Countdown() {
 
         <Reveal delay={0.35}>
           <p className="mt-10 font-script text-3xl text-[color:var(--color-gold-deep)] sm:text-4xl">
-            {WEDDING_DATE_DOTS}
+            {dateDots}
           </p>
         </Reveal>
       </div>

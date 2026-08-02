@@ -2,10 +2,12 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
+  useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
@@ -65,26 +67,70 @@ export function useProgressEffect(
 interface LenisCtx {
   lenis: Lenis | null;
   scrollTo: (target: string | number | HTMLElement, offset?: number) => void;
+  /** Release the scroll lock (the page starts locked until the envelope opens). */
+  unlockScroll: () => void;
 }
-const Ctx = createContext<LenisCtx>({ lenis: null, scrollTo: () => {} });
+const Ctx = createContext<LenisCtx>({
+  lenis: null,
+  scrollTo: () => {},
+  unlockScroll: () => {},
+});
 export const useLenis = () => useContext(Ctx);
 
 export function ScrollProvider({ children }: { children: ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const reducedMotion = usePrefersReducedMotion();
+  // The story stays pinned at the top until the invitation is opened — no
+  // scrolling past the envelope before the visitor breaks the seal.
+  const [locked, setLocked] = useState(true);
+  const lockedRef = useRef(true);
+  const unlockScroll = useCallback(() => {
+    lockedRef.current = false;
+    setLocked(false);
+  }, []);
+
+  // Enforce the lock across every input path: Lenis (wheel), and native
+  // touch/overflow (phones, where Lenis only reads position). A gesture while
+  // locked still fires its listener elsewhere (so the envelope can open) — it
+  // just can't move the page.
+  useEffect(() => {
+    const lenis = lenisRef.current;
+    const root = document.documentElement;
+    const body = document.body;
+    if (locked) {
+      lenis?.stop();
+      window.scrollTo(0, 0);
+      root.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+      body.style.touchAction = "none";
+    } else {
+      lenis?.start();
+      root.style.overflow = "";
+      body.style.overflow = "";
+      body.style.touchAction = "";
+    }
+    return () => {
+      root.style.overflow = "";
+      body.style.overflow = "";
+      body.style.touchAction = "";
+    };
+  }, [locked]);
 
   useEffect(() => {
     // Comfortable reading pace: smooth, unhurried, but never slow-motion.
     // Touch devices use fully native scrolling (Lenis only reads position).
     const lenis = new Lenis({
-      duration: 0.85,
+      // Gentle, unhurried glide — a little slower and smoother than before.
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !reducedMotion,
       syncTouch: false,
-      touchMultiplier: 1.5,
-      wheelMultiplier: 1.15,
+      touchMultiplier: 1.05,
+      wheelMultiplier: 0.95,
     });
     lenisRef.current = lenis;
+    // Honour a lock that was set before Lenis existed (it starts locked).
+    if (lockedRef.current) lenis.stop();
 
     const onScroll = ({
       scroll,
@@ -122,8 +168,9 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
           offset,
           duration: 1.2,
         }),
+      unlockScroll,
     }),
-    []
+    [unlockScroll]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

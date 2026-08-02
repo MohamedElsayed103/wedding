@@ -1,37 +1,32 @@
 "use client";
 
 import { cx } from "@/lib/utils";
-import { Mohamed, type SkinTone as MohamedSkinTone, type OutfitPalette as MohamedPalette, type BeardStyle } from "./Mohamed";
-import { Mariam, type SkinTone as MariamSkinTone, type OutfitPalette as MariamPalette } from "./Mariam";
+import { Avatar } from "./avatar/Avatar";
+import {
+  BRIDE_DEFAULT_LOOK,
+  GROOM_DEFAULT_LOOK,
+  type AvatarLook,
+} from "./avatar/types";
 
 interface Props {
-  walking?: boolean;
+  groomLook?: AvatarLook;
+  brideLook?: AvatarLook;
   attire?: "signature" | "ceremony";
+  walking?: boolean;
   lookingAtEachOther?: boolean;
   className?: string;
   animate?: boolean;
-  groomSkinTone?: MohamedSkinTone;
-  groomPalette?: MohamedPalette;
-  groomBeard?: BeardStyle;
-  brideSkinTone?: MariamSkinTone;
-  bridePalette?: MariamPalette;
 }
 
-/**
- * Mohamed & Mariam side by side — the pair the camera follows through the
- * garden. Optionally walking (gentle bob) and gazing at one another.
- */
+/** Mohamed & Mariam (or any couple) side by side. */
 export function Couple({
-  walking = false,
+  groomLook = GROOM_DEFAULT_LOOK,
+  brideLook = BRIDE_DEFAULT_LOOK,
   attire = "signature",
+  walking = false,
   lookingAtEachOther = true,
   className,
   animate = true,
-  groomSkinTone,
-  groomPalette,
-  groomBeard,
-  brideSkinTone,
-  bridePalette,
 }: Props) {
   return (
     <div className={cx("relative flex items-end justify-center gap-2 sm:gap-4", className)}>
@@ -39,39 +34,26 @@ export function Couple({
         className="relative h-full"
         style={walking && animate ? { animation: "walk-bob 1.1s ease-in-out infinite" } : undefined}
       >
-        <Mohamed
-          attire={attire}
-          skinTone={groomSkinTone}
-          outfitPalette={groomPalette}
-          beardStyle={groomBeard}
+        <Avatar
+          config={{ ...groomLook, role: "groom", attire }}
           facing={lookingAtEachOther ? "right" : "front"}
           animate={animate}
           className="h-full"
         />
       </div>
 
-      {/* connecting heart */}
       <div className="pointer-events-none absolute bottom-[34%] left-1/2 z-10 -translate-x-1/2">
-        <span
-          className={cx("block text-lg text-[color:var(--color-gold)]", animate && "anim-float")}
-          style={{ animationDuration: "4s" }}
-        >
+        <span className={cx("block text-lg text-[color:var(--color-gold)]", animate && "anim-float")} style={{ animationDuration: "4s" }}>
           ♡
         </span>
       </div>
 
       <div
         className="relative h-full"
-        style={
-          walking && animate
-            ? { animation: "walk-bob 1.1s ease-in-out 0.55s infinite" }
-            : undefined
-        }
+        style={walking && animate ? { animation: "walk-bob 1.1s ease-in-out 0.55s infinite" } : undefined}
       >
-        <Mariam
-          attire={attire}
-          skinTone={brideSkinTone}
-          outfitPalette={bridePalette}
+        <Avatar
+          config={{ ...brideLook, role: "bride", attire }}
           facing={lookingAtEachOther ? "left" : "front"}
           animate={animate}
           className="h-full"

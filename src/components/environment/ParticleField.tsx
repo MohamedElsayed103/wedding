@@ -29,7 +29,7 @@ const LEAF_COLORS = ["#9caa7d", "#7d8a5f", "#b7c199"];
 
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { density, ready } = useDeviceTier();
+  const { density, ready, isTouch } = useDeviceTier();
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -47,7 +47,9 @@ export function ParticleField() {
       // Cap the backing-store resolution — a full-screen canvas at dpr 3
       // (common on phones) redraws several million extra pixels every frame
       // for detail nobody notices in soft, blurry decorative particles.
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      // Phones are fill-rate bound; cap harder on touch so the fullscreen
+      // canvas isn't repainting millions of extra pixels each frame.
+      dpr = Math.min(window.devicePixelRatio || 1, isTouch ? 1 : 1.5);
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = Math.floor(w * dpr);
@@ -58,7 +60,7 @@ export function ParticleField() {
     };
     resize();
 
-    const base = reduced ? 10 : 42;
+    const base = reduced ? 10 : isTouch ? 26 : 42;
     const count = Math.max(8, Math.round(base * density));
     const particles: P[] = [];
 
@@ -221,7 +223,7 @@ export function ParticleField() {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", resize);
     };
-  }, [density, ready, reduced]);
+  }, [density, ready, reduced, isTouch]);
 
   return (
     <canvas

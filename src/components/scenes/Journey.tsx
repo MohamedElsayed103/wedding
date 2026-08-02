@@ -6,8 +6,9 @@ import { Couple } from "@/components/characters/Couple";
 import { GardenGround } from "@/components/environment/GardenGround";
 import { Flower } from "@/components/environment/GardenElements";
 import { useDeviceTier } from "@/hooks/useDeviceTier";
-import { type Memory } from "@/lib/i18n";
+import { type Chapter } from "@/lib/i18n";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 import { seededRandom } from "@/lib/utils";
 
 /**
@@ -31,7 +32,9 @@ export function Journey() {
   const coupleY = useTransform(scrollYProgress, [0, 1], ["2%", "-2%"]);
 
   const { t } = useLang();
-  const memories = t.memories;
+  const { groom, bride } = useSite();
+  // Chapter One is told in the meeting scene; the walk carries the rest.
+  const chapters = t.chapters.slice(1);
   const { density } = useDeviceTier();
   const flowerCount = Math.max(6, Math.round(14 * density));
   const pathFlowers = (() => {
@@ -49,7 +52,7 @@ export function Journey() {
     <section
       ref={ref}
       className="relative"
-      style={{ height: `${memories.length * 60 + 40}svh` }}
+      style={{ height: `${chapters.length * 60 + 40}svh` }}
     >
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         {/* moving flower path — the ground slides by as they walk forward */}
@@ -73,17 +76,17 @@ export function Journey() {
           style={{ scale: coupleScale, y: coupleY }}
           className="absolute bottom-[16%] left-1/2 z-10 h-[40vh] max-h-[400px] min-h-[230px] -translate-x-1/2"
         >
-          <Couple walking lookingAtEachOther className="h-full" />
+          <Couple walking lookingAtEachOther groomLook={groom} brideLook={bride} className="h-full" />
         </motion.div>
 
-        {/* memories fade in along the way */}
-        {memories.map((m, i) => (
-          <MemoryCard
-            key={m.id}
-            memory={m}
+        {/* chapters fade in along the way */}
+        {chapters.map((c, i) => (
+          <ChapterCard
+            key={c.id}
+            chapter={c}
             progress={scrollYProgress}
             index={i}
-            total={memories.length}
+            total={chapters.length}
           />
         ))}
 
@@ -93,18 +96,18 @@ export function Journey() {
   );
 }
 
-function MemoryCard({
-  memory,
+function ChapterCard({
+  chapter,
   progress,
   index,
   total,
 }: {
-  memory: Memory;
+  chapter: Chapter;
   progress: MotionValue<number>;
   index: number;
   total: number;
 }) {
-  // Give each memory a band of the scroll; fade in, hold, fade out.
+  // Give each chapter a band of the scroll; fade in, hold, fade out.
   const band = 1 / (total + 0.5);
   const start = index * band + 0.06;
   const opacity = useTransform(
@@ -123,13 +126,12 @@ function MemoryCard({
       style={{ opacity, y }}
       className="pointer-events-none absolute top-[18%] left-0 right-0 z-20 px-6 text-center safe-x"
     >
-      <div className="mx-auto max-w-md">
-        <span className="text-2xl text-[color:var(--color-gold)]">{memory.icon}</span>
-        <h3 className="mt-3 font-display text-2xl text-[color:var(--color-ink)] sm:text-3xl">
-          {memory.title}
-        </h3>
-        <p className="mt-3 font-serif text-base italic leading-relaxed text-[color:var(--color-ink-soft)] sm:text-lg">
-          {memory.caption}
+      <div className="mx-auto max-w-3xl">
+        <p className="font-roman uppercase tracking-luxe text-sm text-[color:var(--color-gold-deep)] sm:text-base">
+          {chapter.label}
+        </p>
+        <p className="mt-4 font-serif text-2xl italic leading-snug text-[color:var(--color-ink)] sm:text-4xl lg:text-5xl">
+          {chapter.text}
         </p>
       </div>
     </motion.div>

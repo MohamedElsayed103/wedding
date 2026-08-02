@@ -29,16 +29,25 @@ const Ctx = createContext<LangCtx>({
 export const useLang = () => useContext(Ctx);
 
 /**
- * No persistence by design: the language gate is meant to greet every guest
- * on every visit (a couple's family may share one device, or a guest may
- * revisit later expecting the choice screen again), so nothing is written to
- * localStorage/cookies here — a refresh always re-asks.
+ * No persistence by design: the language gate greets every guest on every
+ * visit (shared family devices, returning guests), so nothing is written to
+ * storage — a refresh always re-asks.
+ *
+ * `dict` lets a per-couple dictionary (built from the DB record via
+ * buildDict) override the static template copy. Falls back to DICT.
  */
-export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("en");
+export function LangProvider({
+  children,
+  dict = DICT,
+  defaultLang = "en",
+}: {
+  children: ReactNode;
+  dict?: Record<Lang, Strings>;
+  defaultLang?: Lang;
+}) {
+  const [lang, setLang] = useState<Lang>(defaultLang);
   const [ready, setReady] = useState(false);
 
-  // Reflect language + direction on <html> so CSS/RTL follow along.
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -50,8 +59,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<LangCtx>(
-    () => ({ lang, ready, t: DICT[lang], choose }),
-    [lang, ready, choose]
+    () => ({ lang, ready, t: dict[lang], choose }),
+    [lang, ready, choose, dict]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

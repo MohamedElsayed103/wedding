@@ -251,6 +251,10 @@ html.lenis body {
   25% { transform: translateY(-2px) rotate(-0.6deg); }
   75% { transform: translateY(-2px) rotate(0.6deg); }
 }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
 @keyframes hint-bounce {
   0%, 100% { transform: translateY(0); opacity: 0.55; }
   50% { transform: translateY(8px); opacity: 1; }

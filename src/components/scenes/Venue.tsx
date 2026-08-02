@@ -2,11 +2,15 @@
 
 import { FiMapPin, FiNavigation } from "react-icons/fi";
 import { Reveal } from "@/components/ui/Reveal";
-import { VENUE } from "@/lib/constants";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 
 export function Venue() {
   const { t } = useLang();
+  const { mapsUrl } = useSite();
+  const embedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(
+    `${t.venueName} ${t.venueCity}`
+  )}&z=14&output=embed`;
 
   const tips = [
     { icon: "🅿️", title: t.tipParkingTitle, text: t.tipParkingText },
@@ -52,7 +56,7 @@ export function Venue() {
 
               <iframe
                 title="Wedding venue map"
-                src={VENUE.embedSrc}
+                src={embedSrc}
                 className="h-[300px] w-full border-0 sm:h-[360px]"
                 style={{ filter: "sepia(0.18) saturate(0.9) contrast(0.96)" }}
                 loading="lazy"
@@ -62,7 +66,7 @@ export function Venue() {
             </div>
 
             <a
-              href={VENUE.directionsUrl}
+              href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="lux-button mt-3 flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-roman text-xs tracking-luxe text-[#3c2c20]"

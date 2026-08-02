@@ -6,11 +6,11 @@
 
 export type Lang = "en" | "ar";
 
-export interface Memory {
+/** A chapter of the couple's story (display shape, resolved per language). */
+export interface Chapter {
   id: string;
-  icon: string;
-  title: string;
-  caption: string;
+  label: string; // e.g. "Chapter One"
+  text: string;
 }
 
 const en = {
@@ -42,31 +42,29 @@ const en = {
   verseTranslation: "“And He placed between you affection and mercy.”",
   verseReference: "Sūrah ar-Rūm · 30:21",
 
-  // meeting
-  chapterOne: "CHAPTER ONE",
-  chapterOneTitle: "Two paths, one garden",
-
-  // journey memories
-  memories: [
+  // the story — chapter one shows in the meeting scene, the rest along the journey
+  chapters: [
     {
-      id: "met",
-      icon: "✦",
-      title: "The First Hello",
-      caption: "Two strangers, one glance — and the garden held its breath.",
+      id: "ch1",
+      label: "Chapter One",
+      text: "We walked different paths… until God brought us together to write one beautiful story.",
     },
     {
-      id: "laughter",
-      icon: "❀",
-      title: "A Thousand Small Laughs",
-      caption: "Ordinary days turned golden simply because we shared them.",
+      id: "ch2",
+      label: "Chapter Two",
+      text: "Some stories don't need time — when you know, you know.",
     },
     {
-      id: "promise",
-      icon: "☾",
-      title: "The Quiet Promise",
-      caption: "Beneath the olive branches, forever began to feel possible.",
+      id: "ch3",
+      label: "Chapter Three",
+      text: "With every smile, every prayer, and every conversation that never seemed to end, our story grew.",
     },
-  ] as Memory[],
+    {
+      id: "ch4",
+      label: "Chapter Four",
+      text: "From the prayers of yesterday… to the joy of today, our most beautiful chapter begins.",
+    },
+  ] as Chapter[],
 
   // invitation card
   honourOfPresence: "request the honour of your presence",
@@ -83,11 +81,11 @@ const en = {
   venueLabel: "WHERE FOREVER BEGINS",
   directions: "GET DIRECTIONS",
   tipParkingTitle: "PARKING",
-  tipParkingText: "Street and courtyard parking available around the mosque.",
+  tipParkingText: "Parking is available near the venue.",
   tipArrivalTitle: "ARRIVAL",
   tipArrivalText: "Doors open 30 minutes before the ceremony begins.",
   tipDressTitle: "DRESS",
-  tipDressText: "Elegant and modest — the evening is celebrated in the mosque.",
+  tipDressText: "Elegant attire — dress to celebrate.",
 
   // finale
   foreverBegins: "Forever Begins",
@@ -119,27 +117,26 @@ const ar: Strings = {
   verseTranslation: "",
   verseReference: "سورة الروم · الآية 21",
 
-  chapterOne: "الفصل الأول",
-  chapterOneTitle: "طريقان… وحديقة واحدة",
-
-  memories: [
+  chapters: [
     {
-      id: "met",
-      icon: "✦",
-      title: "اللقاء الأول",
-      caption: "غريبان ونظرة واحدة — فحبست الحديقة أنفاسها.",
+      id: "ch1",
+      label: "الفصل الأول",
+      text: "كان لكل منا طريقه.. حتى جمعنا الله لنكتب حكاية واحدة جميلة.",
     },
     {
-      id: "laughter",
-      icon: "❀",
-      title: "ألف ضحكة صغيرة",
-      caption: "أيامٌ عادية صارت ذهبية لأننا عشناها معًا.",
+      id: "ch2",
+      label: "الفصل الثاني",
+      text: "بعض الحكايات تبدأ بيقين... لا بمرور الوقت.",
     },
     {
-      id: "promise",
-      icon: "☾",
-      title: "الوعد الهادئ",
-      caption: "تحت أغصان الزيتون، بدأ الأبد يبدو ممكنًا.",
+      id: "ch3",
+      label: "الفصل الثالث",
+      text: "كبرت حكايتنا مع كل ضحكة، وكل دعوة، وكل حديث لا ينتهي.",
+    },
+    {
+      id: "ch4",
+      label: "الفصل الرابع",
+      text: "بين دعاء الأمس.. وفرحة اليوم، تبدأ أجمل فصول حكايتنا.",
     },
   ],
 
@@ -155,11 +152,11 @@ const ar: Strings = {
   venueLabel: "حيث يبدأ الأبد",
   directions: "الاتجاهات إلى المكان",
   tipParkingTitle: "مواقف السيارات",
-  tipParkingText: "تتوفر مواقف في الشارع وحول المسجد.",
+  tipParkingText: "تتوفر مواقف للسيارات بالقرب من المكان.",
   tipArrivalTitle: "الوصول",
   tipArrivalText: "تُفتح الأبواب قبل بدء الحفل بثلاثين دقيقة.",
   tipDressTitle: "الملابس",
-  tipDressText: "أناقة واحتشام — فالفرحة تُقام في رحاب المسجد.",
+  tipDressText: "أناقة تليق بالاحتفال.",
 
   foreverBegins: "ويبدأ الأبد",
   madeWithLove: "صُنع بحبٍ، لمن نُحب.",
