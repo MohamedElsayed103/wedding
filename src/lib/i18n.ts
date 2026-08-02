@@ -47,7 +47,7 @@ const en = {
     {
       id: "ch1",
       label: "Chapter One",
-      text: "We walked different paths… until God brought us together to write one beautiful story.",
+      text: "Different paths, one beautiful story.",
     },
     {
       id: "ch2",
@@ -57,12 +57,12 @@ const en = {
     {
       id: "ch3",
       label: "Chapter Three",
-      text: "With every smile, every prayer, and every conversation that never seemed to end, our story grew.",
+      text: "Our story grew with every smile, prayer, and endless conversation",
     },
     {
       id: "ch4",
       label: "Chapter Four",
-      text: "From the prayers of yesterday… to the joy of today, our most beautiful chapter begins.",
+      text: "From yesterday's prayers to today's joy, our best chapter begins.",
     },
   ] as Chapter[],
 
@@ -83,7 +83,7 @@ const en = {
   tipParkingTitle: "PARKING",
   tipParkingText: "Parking is available near the venue.",
   tipArrivalTitle: "ARRIVAL",
-  tipArrivalText: "Doors open 30 minutes before the ceremony begins.",
+  tipArrivalText: "Doors open at 8:30 PM",
   tipDressTitle: "DRESS",
   tipDressText: "Elegant attire — dress to celebrate.",
 
