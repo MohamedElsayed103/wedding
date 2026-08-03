@@ -154,7 +154,7 @@ const ar: Strings = {
   tipParkingTitle: "مواقف السيارات",
   tipParkingText: "تتوفر مواقف للسيارات بالقرب من المكان.",
   tipArrivalTitle: "الوصول",
-  tipArrivalText: "تُفتح الأبواب قبل بدء الحفل بثلاثين دقيقة.",
+  tipArrivalText: "الابواب تفتح عند الساعة 8:30 مساءً",
   tipDressTitle: "الملابس",
   tipDressText: "أناقة تليق بالاحتفال.",
 
