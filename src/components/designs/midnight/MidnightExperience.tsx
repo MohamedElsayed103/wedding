@@ -16,7 +16,6 @@ import type { ResolvedSite } from "@/lib/siteContent";
 import { Preloader } from "@/components/ui/Preloader";
 import { LanguageGate } from "@/components/ui/LanguageGate";
 import { CustomCursor } from "@/components/ui/CustomCursor";
-import { AudioToggle } from "@/components/ui/AudioToggle";
 import { ProgressRail } from "@/components/ui/ProgressRail";
 import { Couple } from "@/components/characters/Couple";
 import { seededRandom } from "@/lib/utils";
@@ -46,7 +45,6 @@ export function MidnightExperience({
           <MidnightSky />
           <CustomCursor />
           <ProgressRail />
-          <AudioToggle />
 
           <main className="relative z-10">
             <Overture />

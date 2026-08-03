@@ -117,10 +117,30 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   }, [locked]);
 
   useEffect(() => {
-    // Comfortable reading pace: smooth, unhurried, but never slow-motion.
-    // Touch devices use fully native scrolling (Lenis only reads position).
+    const isTouch =
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
+    // Phones/tablets: native scrolling only. A single passive listener feeds
+    // the progress store — no Lenis rAF loop and no smoothing layer fighting
+    // iOS momentum, which is what made scrolling feel laggy. The scroll lock
+    // still works via `overflow: hidden` (set in the lock effect above).
+    if (isTouch) {
+      const onNativeScroll = () => {
+        const limit = document.documentElement.scrollHeight - window.innerHeight;
+        store.set(limit > 0 ? window.scrollY / limit : 0, 0);
+      };
+      onNativeScroll();
+      window.addEventListener("scroll", onNativeScroll, { passive: true });
+      window.addEventListener("resize", onNativeScroll, { passive: true });
+      return () => {
+        window.removeEventListener("scroll", onNativeScroll);
+        window.removeEventListener("resize", onNativeScroll);
+      };
+    }
+
+    // Desktop: Lenis smooth wheel — a comfortable, unhurried glide.
     const lenis = new Lenis({
-      // Gentle, unhurried glide — a little slower and smoother than before.
       duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !reducedMotion,
@@ -163,11 +183,14 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   const value = useMemo<LenisCtx>(
     () => ({
       lenis: lenisRef.current,
-      scrollTo: (target, offset = 0) =>
-        lenisRef.current?.scrollTo(target, {
-          offset,
-          duration: 1.2,
-        }),
+      scrollTo: (target, offset = 0) => {
+        if (lenisRef.current) {
+          lenisRef.current.scrollTo(target, { offset, duration: 1.2 });
+        } else if (typeof target === "number") {
+          // Native path (touch): smooth-scroll to a pixel offset.
+          window.scrollTo({ top: target + offset, behavior: "smooth" });
+        }
+      },
       unlockScroll,
     }),
     [unlockScroll]

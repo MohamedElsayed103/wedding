@@ -60,7 +60,7 @@ export function ParticleField() {
     };
     resize();
 
-    const base = reduced ? 10 : isTouch ? 26 : 42;
+    const base = reduced ? 10 : isTouch ? 14 : 42;
     const count = Math.max(8, Math.round(base * density));
     const particles: P[] = [];
 
@@ -217,11 +217,19 @@ export function ParticleField() {
     window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("resize", resize);
 
+    // Don't burn frames (or battery) while the tab is hidden.
+    const onVisibility = () => {
+      cancelAnimationFrame(raf);
+      if (!document.hidden && !reduced) raf = requestAnimationFrame(render);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [density, ready, reduced, isTouch]);
 

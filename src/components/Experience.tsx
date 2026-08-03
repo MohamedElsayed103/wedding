@@ -9,7 +9,6 @@ import { Atmosphere } from "@/components/environment/Atmosphere";
 import { Preloader } from "@/components/ui/Preloader";
 import { LanguageGate } from "@/components/ui/LanguageGate";
 import { CustomCursor } from "@/components/ui/CustomCursor";
-import { AudioToggle } from "@/components/ui/AudioToggle";
 import { ProgressRail } from "@/components/ui/ProgressRail";
 import { Envelope } from "@/components/scenes/Envelope";
 import { ArabicCalligraphy } from "@/components/scenes/ArabicCalligraphy";
@@ -40,7 +39,6 @@ export function Experience({
         <Atmosphere />
         <CustomCursor />
         <ProgressRail />
-        <AudioToggle />
 
         <main className="relative z-10">
           <Envelope />
