@@ -35,9 +35,14 @@ async function loadPrimary() {
 export async function generateMetadata(): Promise<Metadata> {
   const { site } = await loadPrimary();
   const names = `${site.groomName_en} & ${site.brideName_en}`;
+  const title = `${names} — ${site.dateLabel_en}`;
+  const description = `Join ${names} for an interactive wedding invitation film.`;
+  // Override the layout's Reverie OpenGraph so shared links show the couple.
   return {
-    title: `${names} — ${site.dateLabel_en}`,
-    description: `Join ${names} — a wedding invitation film.`,
+    title,
+    description,
+    openGraph: { title, description, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

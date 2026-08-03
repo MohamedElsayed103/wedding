@@ -40,9 +40,13 @@ export async function generateMetadata({
   const loaded = await load(slug);
   if (!loaded) return { title: "Invitation not found" };
   const names = `${loaded.site.groomName_en} & ${loaded.site.brideName_en}`;
+  const title = `${names} — ${loaded.site.dateLabel_en}`;
+  const description = `Join ${names} for an interactive wedding invitation film.`;
   return {
-    title: `${names} — ${loaded.site.dateLabel_en}`,
-    description: `Join ${names} — a wedding invitation film.`,
+    title,
+    description,
+    openGraph: { title, description, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

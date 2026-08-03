@@ -7,26 +7,31 @@ import { useLang } from "@/hooks/useLang";
 /** A graceful monogram loader while fonts settle. Locks scroll until ready. */
 export function Preloader() {
   const [done, setDone] = useState(false);
-  const { t } = useLang();
+  const { t, ready } = useLang();
 
   useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, []);
+
+  // Only dismiss once a language is chosen, then hold the tagline (now in the
+  // chosen language) ~1.4s so it's actually readable before the story reveals.
+  useEffect(() => {
+    if (!ready) return;
     let cancelled = false;
-    const minShow = new Promise((r) => setTimeout(r, 1600));
     const fonts =
       typeof document !== "undefined" && "fonts" in document
         ? document.fonts.ready
         : Promise.resolve();
-
-    Promise.all([minShow, fonts]).then(() => {
+    Promise.all([fonts, new Promise((r) => setTimeout(r, 1400))]).then(() => {
       if (!cancelled) setDone(true);
     });
-
-    document.documentElement.style.overflow = "hidden";
     return () => {
       cancelled = true;
-      document.documentElement.style.overflow = "";
     };
-  }, []);
+  }, [ready]);
 
   useEffect(() => {
     if (done) document.documentElement.style.overflow = "";
