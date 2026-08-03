@@ -69,8 +69,8 @@ export function Envelope() {
   // One-shot celebratory burst when the seal breaks.
   const burst = (() => {
     const rnd = seededRandom(64);
-    return Array.from({ length: 14 }, (_, i) => {
-      const angle = (i / 14) * Math.PI * 2 + rnd() * 0.5;
+    return Array.from({ length: 10 }, (_, i) => {
+      const angle = (i / 10) * Math.PI * 2 + rnd() * 0.5;
       const dist = 120 + rnd() * 160;
       return {
         id: i,
@@ -101,7 +101,7 @@ export function Envelope() {
             className="flex flex-col items-center"
             animate={
               dismissed
-                ? { opacity: 0, scale: 3.4, y: 120 }
+                ? { opacity: 0, scale: 2.6, y: 120 }
                 : { opacity: 1, scale: 1, y: 0 }
             }
             transition={{ duration: 1.2, ease: [0.55, 0, 0.3, 1] }}
@@ -111,6 +111,9 @@ export function Envelope() {
             style={{
               pointerEvents: dismissed ? "none" : undefined,
               transformOrigin: "50% 42%",
+              // Promote to its own GPU layer so the zoom-out is a cheap texture
+              // scale, not a per-frame re-raster of the whole envelope subtree.
+              willChange: "transform, opacity",
               // stay in layout so the hint below doesn't jump when we vanish
               visibility: hidden ? "hidden" : "visible",
             }}
@@ -162,7 +165,6 @@ export function Envelope() {
                         style={{
                           fontSize: b.size,
                           color: b.gold ? "#c9a24b" : "#f0d9c4",
-                          textShadow: b.gold ? "0 0 8px rgba(232,206,143,0.9)" : undefined,
                         }}
                       >
                         {b.glyph}
@@ -188,19 +190,17 @@ export function Envelope() {
                     padding: 2,
                     background:
                       "linear-gradient(120deg, #a67c34, #e8ce8f, #c9a24b, #e8ce8f, #a67c34)",
-                    backgroundSize: "300% auto",
                     boxShadow: "0 24px 60px -20px rgba(74,66,53,0.45)",
                   }}
                   initial={false}
                   animate={
                     opened
-                      ? { y: "-84%", opacity: 1, backgroundPosition: "200% center" }
+                      ? { y: "-84%", opacity: 1 }
                       : { y: "-50%", opacity: 0 }
                   }
                   transition={{
                     y: { duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: opened ? 0.35 : 0 },
                     opacity: { duration: 0.7, delay: opened ? 0.35 : 0 },
-                    backgroundPosition: { duration: 3, ease: "linear", delay: 0.4 },
                   }}
                 >
                   <div
