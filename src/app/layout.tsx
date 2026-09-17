@@ -45,15 +45,15 @@ const amiri = Amiri({
   weight: ["400", "700"],
 });
 
-const SITE_TITLE = "Reverie — cinematic wedding invitation films";
+const SITE_TITLE = "Zifaf — cinematic wedding invitation films";
 const SITE_DESC =
-  "The invitation is a memory. Reverie turns your love story into a cinematic, illustrated, bilingual invitation film that guests watch instead of skim.";
+  "The invitation is a memory. Zifaf turns your love story into a cinematic, illustrated, bilingual invitation film that guests watch instead of skim.";
 
 export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESC,
-  applicationName: "Reverie",
-  authors: [{ name: "Reverie" }],
+  applicationName: "Zifaf",
+  authors: [{ name: "Zifaf" }],
   keywords: [
     "wedding invitation website",
     "animated wedding invitation",

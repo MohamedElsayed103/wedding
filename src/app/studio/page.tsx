@@ -14,9 +14,7 @@ export const metadata: Metadata = {
   description: BRAND.subtitle,
 };
 
-const mailto = `mailto:${BRAND.email}?subject=${encodeURIComponent(
-  "I'd like a Reverie invitation"
-)}`;
+const orderHref = "/order";
 
 export default function Landing() {
   return (
@@ -221,7 +219,7 @@ export default function Landing() {
                   ))}
                 </ul>
                 <a
-                  href={mailto}
+                  href={orderHref}
                   className={
                     "mt-7 rounded-full px-6 py-3 text-center font-roman text-xs tracking-luxe " +
                     (tier.featured
@@ -274,7 +272,7 @@ export default function Landing() {
             <Link href="/demo" className="lux-button w-full rounded-full px-8 py-4 font-roman text-xs tracking-luxe text-[#3c2c20] sm:w-auto">
               WATCH THE DEMO
             </Link>
-            <a href={mailto} className="w-full rounded-full border border-[color:var(--color-gold)]/40 px-8 py-4 font-roman text-xs tracking-luxe text-[color:var(--color-gold-deep)] hover:bg-[color:var(--color-gold)]/10 sm:w-auto">
+            <a href={orderHref} className="w-full rounded-full border border-[color:var(--color-gold)]/40 px-8 py-4 font-roman text-xs tracking-luxe text-[color:var(--color-gold-deep)] hover:bg-[color:var(--color-gold)]/10 sm:w-auto">
               GET YOURS
             </a>
           </div>
@@ -288,8 +286,8 @@ export default function Landing() {
           <p className="font-body text-xs text-[color:var(--color-ink-soft)]">
             © {new Date().getFullYear()} {BRAND.name}. The invitation is a memory.
           </p>
-          <a href={mailto} className="font-body text-xs text-[color:var(--color-gold-deep)] hover:underline">
-            {BRAND.email}
+          <a href={orderHref} className="font-body text-xs text-[color:var(--color-gold-deep)] hover:underline">
+            Start your invitation →
           </a>
         </div>
       </footer>

@@ -74,3 +74,21 @@ export interface AdminData {
   sites: Site[];
   templates: Template[];
 }
+
+/** A lead from the public order form. */
+export type OrderStatus = "new" | "contacted" | "paid" | "done" | "cancelled";
+
+export interface Order {
+  id: string;
+  status: OrderStatus;
+  name: string;
+  whatsapp: string;
+  email?: string;
+  planId: string; // standard | premium | custom
+  templateId: string; // chosen design/template id
+  weddingDate?: string;
+  city?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}

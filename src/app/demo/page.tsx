@@ -8,8 +8,8 @@ import { getDesign, DESIGNS } from "@/components/designs/registry";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "A live invitation — Reverie",
-  description: "Experience a real Reverie wedding invitation film.",
+  title: "A live invitation — Zifaf",
+  description: "Experience a real Zifaf wedding invitation film.",
 };
 
 export default async function DemoPage({

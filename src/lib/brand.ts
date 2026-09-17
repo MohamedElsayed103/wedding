@@ -1,11 +1,11 @@
 /**
  * Brand + marketing config. Single source of truth for the studio identity,
- * so renaming (Reverie → whatever you buy the domain for) is one edit.
+ * so renaming (Zifaf → whatever you buy the domain for) is one edit.
  */
 
 export const BRAND = {
-  name: "Reverie",
-  wordmark: "Reverie",
+  name: "Zifaf",
+  wordmark: "Zifaf",
   // "the invitation is a memory"
   tagline: "The invitation is a memory.",
   subtitle:
@@ -26,48 +26,49 @@ export interface PricingTier {
   featured?: boolean;
 }
 
+// PLACEHOLDER copy — replace features/taglines when you send the final wording.
 export const PRICING: PricingTier[] = [
   {
-    id: "signature",
-    name: "Signature",
-    price: "$199",
+    id: "standard",
+    name: "Standard",
+    price: "500 EGP",
     cadence: "one-time",
-    tagline: "Your story, our art — fast.",
+    tagline: "A beautiful animated invitation.",
     features: [
-      "Choose your couple's look (skin tone, hair, hijab, beard, outfits)",
-      "Full bilingual film (English + Arabic)",
-      "Countdown, live map & venue details",
-      "Hosted on your own link",
-      "Ready in 3–4 days",
+      "Our core design",
+      "Your names, date & venue",
+      "Bilingual film (English + Arabic)",
+      "Countdown, live map & shareable link",
+      "Ready in ~2 days",
     ],
   },
   {
-    id: "bespoke",
-    name: "Bespoke",
-    price: "$690",
+    id: "premium",
+    name: "Premium",
+    price: "1000 EGP",
     cadence: "one-time",
-    tagline: "Characters drawn to look like you.",
+    tagline: "More designs, more you.",
     featured: true,
     features: [
-      "Everything in Signature",
-      "Characters modeled on your engagement photos",
-      "Custom colours, memories & ceremony attire",
-      "White-glove onboarding call + 2 revision rounds",
-      "Custom domain",
+      "Everything in Standard",
+      "More designs to choose from",
+      "Custom character looks of you & your partner",
+      "Your own love-story chapters",
+      "Priority delivery + your own domain",
     ],
   },
   {
-    id: "studio",
-    name: "Studio",
-    price: "$1,900+",
-    cadence: "from",
-    tagline: "For planners & once-in-a-lifetime days.",
+    id: "custom",
+    name: "Custom",
+    price: "1500 EGP",
+    cadence: "one-time",
+    tagline: "A fully bespoke film.",
     features: [
-      "Everything in Bespoke",
-      "Short animated save-the-date reel for social",
-      "Printed QR invitation cards",
-      "Live RSVP dashboard + guest export",
-      "White-label option for wedding planners",
+      "Everything in Premium",
+      "Custom scenes & animation for your story",
+      "Unlimited revisions",
+      "Full custom-domain setup",
+      "White-glove service",
     ],
   },
 ];
@@ -116,7 +117,7 @@ export const HOW_IT_WORKS = [
 export const FAQ = [
   {
     q: "How is this different from Zola or a Canva invite?",
-    a: "Those are static templates. Reverie is an animated love story starring illustrated versions of you — closer to a Pixar short than a web page. Guests actually watch it to the end.",
+    a: "Those are static templates. Zifaf is an animated love story starring illustrated versions of you — closer to a Pixar short than a web page. Guests actually watch it to the end.",
   },
   {
     q: "Do you support Arabic?",

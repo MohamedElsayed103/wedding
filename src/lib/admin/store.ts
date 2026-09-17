@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { getServiceClient } from "@/lib/supabase";
 import { DEFAULT_SITE, DEFAULT_TEMPLATES } from "./defaults";
-import type { Site, Template } from "./types";
+import type { Order, OrderStatus, Site, Template } from "./types";
 
 /**
  * Data access for the admin tool + public site, backed by Supabase Postgres.
@@ -150,6 +150,67 @@ export async function updateTemplate(id: string, patch: Partial<NewTemplateInput
 export async function deleteTemplate(id: string): Promise<boolean> {
   const sb = getServiceClient();
   const { error, count } = await sb.from("templates").delete({ count: "exact" }).eq("id", id);
+  if (error) throw error;
+  return (count ?? 0) > 0;
+}
+
+// ---- Orders (leads) ----
+
+export type NewOrderInput = Omit<Order, "id" | "status" | "createdAt" | "updatedAt">;
+
+export async function createOrder(input: NewOrderInput): Promise<Order> {
+  const sb = getServiceClient();
+  const now = new Date().toISOString();
+  const order: Order = {
+    ...input,
+    id: randomUUID(),
+    status: "new",
+    createdAt: now,
+    updatedAt: now,
+  };
+  const { error } = await sb.from("orders").insert({
+    id: order.id,
+    status: order.status,
+    data: order,
+    created_at: now,
+    updated_at: now,
+  });
+  if (error) throw error;
+  return order;
+}
+
+export async function listOrders(): Promise<Order[]> {
+  const sb = getServiceClient();
+  const { data, error } = await sb
+    .from("orders")
+    .select("data")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((r) => r.data as Order);
+}
+
+export async function updateOrderStatus(
+  id: string,
+  status: OrderStatus
+): Promise<boolean> {
+  const sb = getServiceClient();
+  const { data, error } = await sb.from("orders").select("data").eq("id", id).maybeSingle();
+  if (error) throw error;
+  const existing = data?.data as Order | undefined;
+  if (!existing) return false;
+  const now = new Date().toISOString();
+  const updated: Order = { ...existing, status, updatedAt: now };
+  const { error: upErr } = await sb
+    .from("orders")
+    .update({ status, data: updated, updated_at: now })
+    .eq("id", id);
+  if (upErr) throw upErr;
+  return true;
+}
+
+export async function deleteOrder(id: string): Promise<boolean> {
+  const sb = getServiceClient();
+  const { error, count } = await sb.from("orders").delete({ count: "exact" }).eq("id", id);
   if (error) throw error;
   return (count ?? 0) > 0;
 }

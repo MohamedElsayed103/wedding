@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const names = `${site.groomName_en} & ${site.brideName_en}`;
   const title = `${names} — ${site.dateLabel_en}`;
   const description = `Join ${names} for an interactive wedding invitation film.`;
-  // Override the layout's Reverie OpenGraph so shared links show the couple.
+  // Override the layout's Zifaf OpenGraph so shared links show the couple.
   return {
     title,
     description,
