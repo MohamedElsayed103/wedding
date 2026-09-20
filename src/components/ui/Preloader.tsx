@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 
 /** A graceful monogram loader while fonts settle. Locks scroll until ready. */
 export function Preloader() {
   const [done, setDone] = useState(false);
   const { t, ready } = useLang();
+  const { groomInitial, brideInitial } = useSite();
 
   useEffect(() => {
     document.documentElement.style.overflow = "hidden";
@@ -66,7 +68,7 @@ export function Preloader() {
               />
             </svg>
             <span className="font-roman text-2xl tracking-tighter text-[color:var(--color-gold-deep)]">
-              M♡M
+              {groomInitial}♡{brideInitial}
             </span>
           </motion.div>
           <motion.p

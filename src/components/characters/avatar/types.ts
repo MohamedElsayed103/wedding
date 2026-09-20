@@ -19,6 +19,7 @@ export type BrowId = "soft" | "straight" | "arched" | "bold";
 export type NoseId = "button" | "straight";
 export type MouthId = "smile" | "soft" | "neutral";
 export type FaceShapeId = "oval" | "round" | "square" | "long";
+export type BuildId = "slim" | "regular" | "full";
 export type GlassesId = "none" | "round" | "rect";
 export type GroomOutfitId = "espresso" | "olive" | "navy" | "charcoal";
 export type BrideOutfitId = "champagne" | "rose" | "sage" | "blush";
@@ -28,6 +29,7 @@ export type Attire = "signature" | "ceremony";
  *  set by the scene: groom vs bride, signature vs ceremony). */
 export interface AvatarLook {
   skinTone: SkinToneId;
+  build: BuildId; // body width — slim / regular / full (fuller/wider)
   faceShape: FaceShapeId;
   eyes: EyeId;
   brows: BrowId;
@@ -49,6 +51,7 @@ export interface AvatarConfig extends AvatarLook {
 /** Ordered option lists for building pickers + cast libraries. */
 export const OPTIONS = {
   skinTone: ["porcelain", "fair", "medium", "tan", "deep"] as SkinToneId[],
+  build: ["slim", "regular", "full"] as BuildId[],
   faceShape: ["oval", "round", "square", "long"] as FaceShapeId[],
   eyes: ["almond", "round", "soft"] as EyeId[],
   brows: ["soft", "straight", "arched", "bold"] as BrowId[],
@@ -70,12 +73,12 @@ export const OPTIONS = {
 
 /** Sensible defaults so legacy/partial data still renders. */
 export const GROOM_DEFAULT_LOOK: AvatarLook = {
-  skinTone: "fair", faceShape: "oval", eyes: "almond", brows: "soft", nose: "button",
+  skinTone: "fair", build: "regular", faceShape: "oval", eyes: "almond", brows: "soft", nose: "button",
   mouth: "smile", hair: "shortSwept", hairColor: "darkBrown", beard: "short", hijab: "none",
   glasses: "none", outfit: "espresso",
 };
 export const BRIDE_DEFAULT_LOOK: AvatarLook = {
-  skinTone: "fair", faceShape: "oval", eyes: "almond", brows: "soft", nose: "button",
+  skinTone: "fair", build: "regular", faceShape: "oval", eyes: "almond", brows: "soft", nose: "button",
   mouth: "soft", hair: "longWavy", hairColor: "darkBrown", beard: "none", hijab: "wrapped",
   glasses: "none", outfit: "champagne",
 };

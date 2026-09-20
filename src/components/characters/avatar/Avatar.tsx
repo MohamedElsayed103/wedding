@@ -61,6 +61,12 @@ export function Avatar({ config, className, facing = "front", animate = true }: 
   const showHijab = !isGroom && config.hijab !== "none";
   const showEars = !showHijab;
   const headOffsetY = isGroom ? 0 : 18;
+
+  // Body width by build — scaled about the rig centre (x=100) so the head,
+  // which is drawn separately, stays put. "full" reads as a fuller/heavier body.
+  const BUILD_SX: Record<string, number> = { slim: 0.92, regular: 1, full: 1.13 };
+  const bodySx = BUILD_SX[config.build] ?? 1;
+  const bodyTransform = bodySx === 1 ? undefined : `translate(${100 - 100 * bodySx} 0) scale(${bodySx} 1)`;
   const swayOrigin = isGroom ? "100px 132px" : "100px 150px";
 
   const hairPart = HAIR[config.hair] ?? HAIR.none;
@@ -100,11 +106,13 @@ export function Avatar({ config, className, facing = "front", animate = true }: 
       <ellipse cx="100" cy="432" rx={isGroom ? 46 : 52} ry="7" fill="#4a4235" opacity="0.18" />
 
       <g className={animate ? "anim-breathe" : undefined} style={{ transformOrigin: "100px 420px", animationDuration: isGroom ? "5.5s" : "6.2s" }}>
-        {isGroom ? (
-          <GroomBody uid={uid} cer={cer} outfit={config.outfit} skin={skin} />
-        ) : (
-          <BrideBody uid={uid} skin={skin} animate={animate} />
-        )}
+        <g transform={bodyTransform}>
+          {isGroom ? (
+            <GroomBody uid={uid} cer={cer} outfit={config.outfit} skin={skin} />
+          ) : (
+            <BrideBody uid={uid} skin={skin} animate={animate} />
+          )}
+        </g>
 
         <g transform={`translate(0, ${headOffsetY})`}>
           {showHijab && hijabPart?.back}

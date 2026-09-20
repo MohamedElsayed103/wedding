@@ -21,6 +21,8 @@ export interface ResolvedSite {
   slug: string;
   groom: AvatarLook;
   bride: AvatarLook;
+  groomInitial: string; // first letter of groom's (English) name — for the monogram
+  brideInitial: string; // first letter of bride's (English) name
   weddingDate: string; // ISO
   dateDots: string;
   mapsUrl: string;
@@ -62,6 +64,8 @@ export function resolveSite(site: Site, accentColor: string): ResolvedSite {
     slug: site.slug,
     groom: { ...GROOM_DEFAULT_LOOK, ...(site.groomLook ?? {}) },
     bride: { ...BRIDE_DEFAULT_LOOK, ...(site.brideLook ?? {}) },
+    groomInitial: (site.groomName_en || "").trim().charAt(0).toUpperCase() || "M",
+    brideInitial: (site.brideName_en || "").trim().charAt(0).toUpperCase() || "M",
     weddingDate: site.weddingDate,
     dateDots: site.dateDots,
     mapsUrl: site.venueMapsUrl,

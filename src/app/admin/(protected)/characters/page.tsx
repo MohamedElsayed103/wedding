@@ -52,6 +52,7 @@ export default function CharactersPage() {
 
       <h2 className="mt-10 text-sm font-semibold text-neutral-700">Groom — Mohamed</h2>
       <Row title="Skin tone" role="groom" base={GROOM_DEFAULT_LOOK} dimension="skinTone" values={OPTIONS.skinTone} />
+      <Row title="Body build" role="groom" base={GROOM_DEFAULT_LOOK} dimension="build" values={OPTIONS.build} />
       <Row title="Hair" role="groom" base={GROOM_DEFAULT_LOOK} dimension="hair" values={OPTIONS.groomHair} />
       <Row title="Hair colour" role="groom" base={GROOM_DEFAULT_LOOK} dimension="hairColor" values={OPTIONS.hairColor} />
       <Row title="Beard" role="groom" base={GROOM_DEFAULT_LOOK} dimension="beard" values={OPTIONS.beard} />
@@ -64,6 +65,7 @@ export default function CharactersPage() {
 
       <h2 className="mt-12 text-sm font-semibold text-neutral-700">Bride — Mariam</h2>
       <Row title="Skin tone" role="bride" base={BRIDE_DEFAULT_LOOK} dimension="skinTone" values={OPTIONS.skinTone} />
+      <Row title="Body build" role="bride" base={BRIDE_DEFAULT_LOOK} dimension="build" values={OPTIONS.build} />
       <Row title="Hijab drape" role="bride" base={BRIDE_DEFAULT_LOOK} dimension="hijab" values={OPTIONS.hijab} />
       <Row title="Hair (when no hijab)" role="bride" base={brideHairBase} dimension="hair" values={OPTIONS.brideHair} />
       <Row title="Hair colour" role="bride" base={brideHairBase} dimension="hairColor" values={OPTIONS.hairColor} />

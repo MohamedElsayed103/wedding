@@ -70,7 +70,7 @@ export const FACE: Record<FaceShapeId, (ctx: PartCtx) => ReactNode> = {
   ),
   // Narrower + taller than oval — an elongated, longer face.
   long: (c) => (
-    <path d="M66 70 q0 -34 34 -34 q34 0 34 34 q0 34 -8 54 q-8 24 -26 24 q-18 0 -26 -24 q-8 -20 -8 -54 z" fill={c.skinUrl} />
+    <path d="M67 70 q0 -34 33 -34 q33 0 33 34 q0 38 -8 60 q-8 26 -25 26 q-17 0 -25 -26 q-8 -22 -8 -60 z" fill={c.skinUrl} />
   ),
 };
 

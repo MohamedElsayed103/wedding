@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "@/hooks/useScroll";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 import { seededRandom } from "@/lib/utils";
 
 /**
@@ -18,6 +19,7 @@ export function Envelope() {
   const [hidden, setHidden] = useState(false);
   const { scrollTo, unlockScroll } = useLenis();
   const { t, ready } = useLang();
+  const { groomInitial, brideInitial } = useSite();
   const tiltRef = useRef<HTMLDivElement>(null);
 
   // First scroll gesture opens the envelope too — but only once the visitor
@@ -303,7 +305,7 @@ export function Envelope() {
                           }}
                         >
                           <span className="font-roman text-sm font-semibold tracking-tighter text-[#f4e6c9] sm:text-base">
-                            M♡M
+                            {groomInitial}♡{brideInitial}
                           </span>
                         </div>
                       </motion.div>

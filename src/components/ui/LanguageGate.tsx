@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLang } from "@/hooks/useLang";
+import { useSite } from "@/hooks/useSite";
 
 /**
  * The very first thing a guest sees: an elegant bilingual prompt to choose
@@ -11,6 +12,7 @@ import { useLang } from "@/hooks/useLang";
  */
 export function LanguageGate() {
   const { ready, choose } = useLang();
+  const { groomInitial, brideInitial } = useSite();
 
   // Hold the page still while the gate is open (body-level lock so it
   // composes with the preloader's html-level lock).
@@ -51,7 +53,7 @@ export function LanguageGate() {
               style={{ boxShadow: "0 0 40px rgba(201,162,75,0.25)" }}
             >
               <span className="font-roman text-xl tracking-tighter text-[color:var(--color-gold-deep)]">
-                M♡M
+                {groomInitial}♡{brideInitial}
               </span>
             </div>
 

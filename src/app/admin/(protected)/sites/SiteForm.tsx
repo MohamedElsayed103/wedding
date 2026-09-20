@@ -66,6 +66,7 @@ function LookEditor({ role, look, onChange }: { role: "groom" | "bride"; look: A
   return (
     <div className="grid grid-cols-2 gap-3">
       <div><span className={label}>Skin tone</span><Select value={look.skinTone} onChange={(v) => set("skinTone", v)} opts={OPTIONS.skinTone} /></div>
+      <div><span className={label}>Body build</span><Select value={look.build} onChange={(v) => set("build", v)} opts={OPTIONS.build} /></div>
       <div><span className={label}>Face shape</span><Select value={look.faceShape} onChange={(v) => set("faceShape", v)} opts={OPTIONS.faceShape} /></div>
       <div><span className={label}>Eyes</span><Select value={look.eyes} onChange={(v) => set("eyes", v)} opts={OPTIONS.eyes} /></div>
       <div><span className={label}>Brows</span><Select value={look.brows} onChange={(v) => set("brows", v)} opts={OPTIONS.brows} /></div>
