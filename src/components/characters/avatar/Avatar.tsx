@@ -117,12 +117,12 @@ export function Avatar({ config, className, facing = "front", animate = true }: 
                 <circle cx="137" cy="94" r="8" fill={ctx.skinUrl} />
               </>
             )}
-            {FACE[config.faceShape](ctx)}
+            {(FACE[config.faceShape] ?? FACE.oval)(ctx)}
             {isGroom && BEARD[config.beard](ctx)}
             {!showHijab && hair2.front}
             {showHijab && hijabPart?.front}
 
-            {BROWS[config.brows](ctx)}
+            {(BROWS[config.brows] ?? BROWS.soft)(ctx)}
             <g style={animate ? { animation: "blink 6.5s ease-in-out infinite", transformOrigin: "100px 84px" } : undefined}>
               {EYES[config.eyes](ctx)}
             </g>

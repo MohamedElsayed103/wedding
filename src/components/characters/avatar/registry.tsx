@@ -68,6 +68,10 @@ export const FACE: Record<FaceShapeId, (ctx: PartCtx) => ReactNode> = {
   square: (c) => (
     <path d="M61 74 q0 -38 39 -38 q39 0 39 38 q0 30 -5 44 q-3 11 -13 15 q-21 7 -42 0 q-10 -4 -13 -15 q-5 -14 -5 -44 z" fill={c.skinUrl} />
   ),
+  // Narrower + taller than oval — an elongated, longer face.
+  long: (c) => (
+    <path d="M66 70 q0 -34 34 -34 q34 0 34 34 q0 34 -8 54 q-8 24 -26 24 q-18 0 -26 -24 q-8 -20 -8 -54 z" fill={c.skinUrl} />
+  ),
 };
 
 /* ============================ eyes (blink-wrapped by Avatar) ============================ */
@@ -130,6 +134,13 @@ export const BROWS: Record<BrowId, (ctx: PartCtx) => ReactNode> = {
     <>
       <path d="M76 73 q9 -7 17 -1" stroke={c.hair.shadow} strokeWidth="2.6" fill="none" strokeLinecap="round" />
       <path d="M107 72 q8 -6 17 1" stroke={c.hair.shadow} strokeWidth="2.6" fill="none" strokeLinecap="round" />
+    </>
+  ),
+  // Thicker, fuller brows — heavier and more defined.
+  bold: (c) => (
+    <>
+      <path d="M75 72 q10 -5 19 -1" stroke={c.hair.shadow} strokeWidth="4.6" fill="none" strokeLinecap="round" />
+      <path d="M106 71 q9 -4 19 1" stroke={c.hair.shadow} strokeWidth="4.6" fill="none" strokeLinecap="round" />
     </>
   ),
 };

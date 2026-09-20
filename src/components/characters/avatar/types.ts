@@ -15,10 +15,10 @@ export type HairId =
 export type BeardId = "none" | "stubble" | "short" | "full";
 export type HijabId = "none" | "wrapped" | "draped" | "turban";
 export type EyeId = "almond" | "round" | "soft";
-export type BrowId = "soft" | "straight" | "arched";
+export type BrowId = "soft" | "straight" | "arched" | "bold";
 export type NoseId = "button" | "straight";
 export type MouthId = "smile" | "soft" | "neutral";
-export type FaceShapeId = "oval" | "round" | "square";
+export type FaceShapeId = "oval" | "round" | "square" | "long";
 export type GlassesId = "none" | "round" | "rect";
 export type GroomOutfitId = "espresso" | "olive" | "navy" | "charcoal";
 export type BrideOutfitId = "champagne" | "rose" | "sage" | "blush";
@@ -49,9 +49,9 @@ export interface AvatarConfig extends AvatarLook {
 /** Ordered option lists for building pickers + cast libraries. */
 export const OPTIONS = {
   skinTone: ["porcelain", "fair", "medium", "tan", "deep"] as SkinToneId[],
-  faceShape: ["oval", "round", "square"] as FaceShapeId[],
+  faceShape: ["oval", "round", "square", "long"] as FaceShapeId[],
   eyes: ["almond", "round", "soft"] as EyeId[],
-  brows: ["soft", "straight", "arched"] as BrowId[],
+  brows: ["soft", "straight", "arched", "bold"] as BrowId[],
   nose: ["button", "straight"] as NoseId[],
   mouth: ["smile", "soft", "neutral"] as MouthId[],
   // Full registry (every drawable style).
