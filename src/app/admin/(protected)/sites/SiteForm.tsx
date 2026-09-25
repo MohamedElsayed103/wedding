@@ -10,6 +10,7 @@ import {
   type AvatarLook,
 } from "@/components/characters/avatar/types";
 import type { ChapterEntry, PlanTier, Site, SiteStatus, Template } from "@/lib/admin/types";
+import { DICT, EDITABLE_TEXT, type TextKey } from "@/lib/i18n";
 
 type FormState = Omit<Site, "id" | "createdAt" | "updatedAt">;
 
@@ -35,6 +36,8 @@ const emptySite = (templateId: string): FormState => ({
   chapters: [],
   groomLook: GROOM_DEFAULT_LOOK,
   brideLook: BRIDE_DEFAULT_LOOK,
+  text_en: {},
+  text_ar: {},
   domain: "",
   notes: "",
 });
@@ -104,6 +107,7 @@ export function SiteForm({ site, templates }: { site?: Site; templates: Template
           venueMapsUrl: site.venueMapsUrl, defaultLanguage: site.defaultLanguage, chapters: site.chapters ?? [],
           groomLook: { ...GROOM_DEFAULT_LOOK, ...site.groomLook },
           brideLook: { ...BRIDE_DEFAULT_LOOK, ...site.brideLook },
+          text_en: site.text_en ?? {}, text_ar: site.text_ar ?? {},
           domain: site.domain ?? "", notes: site.notes ?? "",
         }
       : emptySite(templates[0]?.id ?? "")
@@ -114,6 +118,12 @@ export function SiteForm({ site, templates }: { site?: Site; templates: Template
   const [error, setError] = useState("");
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => setForm((f) => ({ ...f, [key]: value }));
+
+  const setText = (lang: "en" | "ar", key: TextKey, value: string) =>
+    setForm((f) => {
+      const field = lang === "ar" ? "text_ar" : "text_en";
+      return { ...f, [field]: { ...(f[field] ?? {}), [key]: value } };
+    });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,6 +219,40 @@ export function SiteForm({ site, templates }: { site?: Site; templates: Template
               </div>
             ))}
             {form.chapters.length === 0 && <p className="text-sm text-neutral-400">No chapters yet.</p>}
+          </div>
+        </div>
+
+        <div className={section}>
+          <h2 className="mb-1 text-sm font-semibold text-neutral-700">Wording</h2>
+          <p className="mb-4 text-xs text-neutral-400">
+            Every other line of template text. Leave a field blank to use the default shown as its
+            placeholder.
+          </p>
+          <div className="flex flex-col gap-5">
+            {EDITABLE_TEXT.map((grp) => (
+              <div key={grp.group}>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">{grp.group}</h3>
+                <div className="flex flex-col gap-3">
+                  {grp.keys.map(({ key, label: lbl, multiline }) => (
+                    <div key={key}>
+                      <span className={label}>{lbl}</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {multiline ? (
+                          <textarea className={input} rows={2} value={form.text_en?.[key] ?? ""} onChange={(e) => setText("en", key, e.target.value)} placeholder={DICT.en[key]} />
+                        ) : (
+                          <input className={input} value={form.text_en?.[key] ?? ""} onChange={(e) => setText("en", key, e.target.value)} placeholder={DICT.en[key]} />
+                        )}
+                        {multiline ? (
+                          <textarea className={input} dir="rtl" rows={2} value={form.text_ar?.[key] ?? ""} onChange={(e) => setText("ar", key, e.target.value)} placeholder={DICT.ar[key]} />
+                        ) : (
+                          <input className={input} dir="rtl" value={form.text_ar?.[key] ?? ""} onChange={(e) => setText("ar", key, e.target.value)} placeholder={DICT.ar[key]} />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

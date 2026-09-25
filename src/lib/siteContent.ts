@@ -42,6 +42,12 @@ function stringsFor(site: Site, lang: Lang): Strings {
   const base = DICT[lang];
   const groom = lang === "ar" ? site.groomName_ar : site.groomName_en;
   const bride = lang === "ar" ? site.brideName_ar : site.brideName_en;
+  // Per-site wording overrides for this language — keep only the ones the couple
+  // actually filled in, so blank fields fall back to the i18n default.
+  const raw = (lang === "ar" ? site.text_ar : site.text_en) ?? {};
+  const overrides = Object.fromEntries(
+    Object.entries(raw).filter(([, v]) => typeof v === "string" && v.trim() !== "")
+  );
   return {
     ...base,
     groom,
@@ -51,6 +57,7 @@ function stringsFor(site: Site, lang: Lang): Strings {
     venueName: lang === "ar" ? site.venueName_ar : site.venueName_en,
     venueCity: lang === "ar" ? site.venueCity_ar : site.venueCity_en,
     chapters: chaptersFor(site, lang).length ? chaptersFor(site, lang) : base.chapters,
+    ...overrides,
   };
 }
 

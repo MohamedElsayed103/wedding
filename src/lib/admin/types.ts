@@ -8,6 +8,7 @@
  */
 
 import type { AvatarLook } from "@/components/characters/avatar/types";
+import type { TextOverrides } from "@/lib/i18n";
 
 export type PlanTier = "signature" | "bespoke" | "studio";
 export type SiteStatus = "draft" | "paid" | "live" | "archived";
@@ -49,6 +50,11 @@ export interface Site {
 
   defaultLanguage: "en" | "ar";
   chapters: ChapterEntry[];
+
+  /** Per-language overrides for the rest of the template wording (tips, verse,
+   *  countdown labels, etc.). Blank/absent keys fall back to the i18n default. */
+  text_en?: TextOverrides;
+  text_ar?: TextOverrides;
 
   groomLook: CharacterLook;
   brideLook: CharacterLook;

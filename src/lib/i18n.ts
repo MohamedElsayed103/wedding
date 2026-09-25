@@ -163,3 +163,83 @@ const ar: Strings = {
 };
 
 export const DICT: Record<Lang, Strings> = { en, ar };
+
+/**
+ * The visitor-facing template strings a couple can override per-site from the
+ * admin editor. (Names, date, venue and chapters have their own dedicated Site
+ * fields, so they're intentionally excluded here.) Anything left blank in the
+ * editor falls back to the DICT default above.
+ */
+export type TextKey =
+  | "chooseLanguage"
+  | "tagline"
+  | "youAreInvited"
+  | "tapToOpen"
+  | "scrollToBegin"
+  | "togetherWithFamilies"
+  | "calligraphyLabel"
+  | "verseTranslation"
+  | "verseReference"
+  | "honourOfPresence"
+  | "countingLabel"
+  | "countingTitle"
+  | "days"
+  | "hours"
+  | "minutes"
+  | "seconds"
+  | "venueLabel"
+  | "directions"
+  | "tipParkingTitle"
+  | "tipParkingText"
+  | "tipArrivalTitle"
+  | "tipArrivalText"
+  | "tipDressTitle"
+  | "tipDressText"
+  | "foreverBegins"
+  | "madeWithLove";
+
+export type TextOverrides = Partial<Record<TextKey, string>>;
+
+/** Grouped by scene, with friendly labels, for the admin "Wording" editor. */
+export const EDITABLE_TEXT: { group: string; keys: { key: TextKey; label: string; multiline?: boolean }[] }[] = [
+  { group: "Language & intro", keys: [
+    { key: "chooseLanguage", label: "Choose-language prompt" },
+    { key: "tagline", label: "Loader tagline" },
+  ] },
+  { group: "Envelope (opening)", keys: [
+    { key: "youAreInvited", label: "You are invited" },
+    { key: "tapToOpen", label: "Tap-to-open hint" },
+    { key: "scrollToBegin", label: "Scroll-to-begin hint" },
+    { key: "togetherWithFamilies", label: "Together with families" },
+  ] },
+  { group: "Calligraphy / verse", keys: [
+    { key: "calligraphyLabel", label: "Calligraphy label" },
+    { key: "verseTranslation", label: "Verse translation", multiline: true },
+    { key: "verseReference", label: "Verse reference" },
+  ] },
+  { group: "Invitation card", keys: [
+    { key: "honourOfPresence", label: "Honour of presence", multiline: true },
+  ] },
+  { group: "Countdown", keys: [
+    { key: "countingLabel", label: "Countdown label" },
+    { key: "countingTitle", label: "Countdown title" },
+    { key: "days", label: "“Days”" },
+    { key: "hours", label: "“Hours”" },
+    { key: "minutes", label: "“Minutes”" },
+    { key: "seconds", label: "“Seconds”" },
+  ] },
+  { group: "Venue & tips", keys: [
+    { key: "venueLabel", label: "Venue label" },
+    { key: "directions", label: "Directions button" },
+    { key: "tipParkingTitle", label: "Parking — title" },
+    { key: "tipParkingText", label: "Parking — text", multiline: true },
+    { key: "tipArrivalTitle", label: "Arrival — title" },
+    { key: "tipArrivalText", label: "Arrival — text", multiline: true },
+    { key: "tipDressTitle", label: "Dress — title" },
+    { key: "tipDressText", label: "Dress — text", multiline: true },
+  ] },
+  { group: "Finale", keys: [
+    { key: "foreverBegins", label: "Forever begins" },
+    { key: "madeWithLove", label: "Made-with-love line", multiline: true },
+  ] },
+];
