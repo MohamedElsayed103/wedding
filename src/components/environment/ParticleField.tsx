@@ -29,11 +29,15 @@ const LEAF_COLORS = ["#9caa7d", "#7d8a5f", "#b7c199"];
 
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { density, ready, isTouch } = useDeviceTier();
+  const { density, ready, isTouch, lite } = useDeviceTier();
   const reduced = usePrefersReducedMotion();
+  // In record/lite mode on a phone, skip the full-screen canvas entirely — a
+  // per-frame clear+repaint is the heaviest paint cost and makes a screen
+  // recording stutter. (Desktop recordings keep it.)
+  const skip = lite && isTouch;
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || skip) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -231,7 +235,9 @@ export function ParticleField() {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [density, ready, reduced, isTouch]);
+  }, [density, ready, reduced, isTouch, skip]);
+
+  if (skip) return null;
 
   return (
     <canvas

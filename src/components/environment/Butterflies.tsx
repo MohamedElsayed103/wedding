@@ -206,7 +206,7 @@ function JsButterflies({ seeds }: { seeds: { x: number; y: number; hue: string; 
 }
 
 export function Butterflies() {
-  const { density, ready, isTouch } = useDeviceTier();
+  const { density, ready, isTouch, lite } = useDeviceTier();
   const reduced = usePrefersReducedMotion();
 
   const count = reduced ? 2 : Math.max(2, Math.round(4 * density));
@@ -222,6 +222,7 @@ export function Butterflies() {
   }, [count]);
 
   if (!ready || reduced) return null;
+  if (lite && isTouch) return null; // record mode on a phone — keep the frame clear
 
   return isTouch ? (
     <CssButterflies seeds={seeds} />

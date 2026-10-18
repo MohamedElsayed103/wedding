@@ -8,7 +8,7 @@ import { seededRandom, smoothstep } from "@/lib/utils";
 /** Fireflies that only ignite as the film approaches night. */
 export function Fireflies() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const { density } = useDeviceTier();
+  const { density, isTouch, lite } = useDeviceTier();
   // Each firefly runs two infinite CSS animations — don't mount any of them
   // until we're actually near the part of the film where they're visible.
   const [visible, setVisible] = useState(false);
@@ -38,6 +38,7 @@ export function Fireflies() {
   });
 
   if (!visible) return null;
+  if (lite && isTouch) return null; // record mode on a phone — animated glows are costly
 
   return (
     <div

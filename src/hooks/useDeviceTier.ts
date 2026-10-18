@@ -9,6 +9,8 @@ interface DeviceInfo {
   /** Multiplier applied to particle counts (0.35 – 1). */
   density: number;
   isTouch: boolean;
+  /** Record / lite mode (?play or ?lite): ambient paint layers back right off. */
+  lite: boolean;
   ready: boolean;
 }
 
@@ -21,6 +23,7 @@ export function useDeviceTier(): DeviceInfo {
     tier: "mid",
     density: 0.7,
     isTouch: false,
+    lite: false,
     ready: false,
   });
 
@@ -30,7 +33,7 @@ export function useDeviceTier(): DeviceInfo {
     const params = new URLSearchParams(window.location.search);
     if (params.has("lite") || params.has("play")) {
       const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-      setInfo({ tier: "low", density: 0.3, isTouch, ready: true });
+      setInfo({ tier: "low", density: 0.3, isTouch, lite: true, ready: true });
       return;
     }
 
@@ -61,7 +64,7 @@ export function useDeviceTier(): DeviceInfo {
       density = 0.38;
     }
 
-    setInfo({ tier, density, isTouch, ready: true });
+    setInfo({ tier, density, isTouch, lite: false, ready: true });
   }, []);
 
   return info;
