@@ -14,6 +14,7 @@ import { SiteProvider, useSite } from "@/hooks/useSite";
 import type { Lang, Strings } from "@/lib/i18n";
 import type { ResolvedSite } from "@/lib/siteContent";
 import { Preloader } from "@/components/ui/Preloader";
+import { AutoPlay } from "@/components/ui/AutoPlay";
 import { LanguageGate } from "@/components/ui/LanguageGate";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ProgressRail } from "@/components/ui/ProgressRail";
@@ -41,6 +42,7 @@ export function MidnightExperience({
       <SiteProvider site={site}>
         <ScrollProvider>
           <Preloader />
+          <AutoPlay />
           <LanguageGate />
           <MidnightSky />
           <CustomCursor />

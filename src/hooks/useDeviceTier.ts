@@ -25,6 +25,15 @@ export function useDeviceTier(): DeviceInfo {
   });
 
   useEffect(() => {
+    // Record / lite mode: when auto-play (?play) or ?lite is on, keep the
+    // ambient particle load deliberately low so a screen recording stays smooth.
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("lite") || params.has("play")) {
+      const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      setInfo({ tier: "low", density: 0.3, isTouch, ready: true });
+      return;
+    }
+
     const cores =
       (navigator as Navigator & { hardwareConcurrency?: number })
         .hardwareConcurrency ?? 4;

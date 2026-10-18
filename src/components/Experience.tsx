@@ -7,6 +7,7 @@ import type { Lang, Strings } from "@/lib/i18n";
 import type { ResolvedSite } from "@/lib/siteContent";
 import { Atmosphere } from "@/components/environment/Atmosphere";
 import { Preloader } from "@/components/ui/Preloader";
+import { AutoPlay } from "@/components/ui/AutoPlay";
 import { LanguageGate } from "@/components/ui/LanguageGate";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ProgressRail } from "@/components/ui/ProgressRail";
@@ -35,6 +36,7 @@ export function Experience({
       <SiteProvider site={site}>
       <ScrollProvider>
         <Preloader />
+        <AutoPlay />
         <LanguageGate />
         <Atmosphere />
         <CustomCursor />

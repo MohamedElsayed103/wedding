@@ -67,12 +67,16 @@ export function useProgressEffect(
 interface LenisCtx {
   lenis: Lenis | null;
   scrollTo: (target: string | number | HTMLElement, offset?: number) => void;
+  /** Jump to an absolute Y with no smoothing — used by the auto-play loop, which
+   *  does its own easing. Drives Lenis on desktop, native scroll on touch. */
+  scrollImmediate: (y: number) => void;
   /** Release the scroll lock (the page starts locked until the envelope opens). */
   unlockScroll: () => void;
 }
 const Ctx = createContext<LenisCtx>({
   lenis: null,
   scrollTo: () => {},
+  scrollImmediate: () => {},
   unlockScroll: () => {},
 });
 export const useLenis = () => useContext(Ctx);
@@ -190,6 +194,10 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
           // Native path (touch): smooth-scroll to a pixel offset.
           window.scrollTo({ top: target + offset, behavior: "smooth" });
         }
+      },
+      scrollImmediate: (y) => {
+        if (lenisRef.current) lenisRef.current.scrollTo(y, { immediate: true });
+        else window.scrollTo(0, y);
       },
       unlockScroll,
     }),
