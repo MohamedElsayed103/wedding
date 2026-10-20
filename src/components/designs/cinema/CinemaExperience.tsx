@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { LangProvider, useLang } from "@/hooks/useLang";
 import { SiteProvider, useSite } from "@/hooks/useSite";
-import { ScrollProvider } from "@/hooks/useScroll";
+import { ScrollProvider, useLenis } from "@/hooks/useScroll";
 import { Preloader } from "@/components/ui/Preloader";
 import { AutoPlay } from "@/components/ui/AutoPlay";
 import { LanguageGate } from "@/components/ui/LanguageGate";
@@ -40,6 +40,7 @@ export function CinemaExperience({
           >
             <Preloader />
             <AutoPlay />
+            <Unlocker />
             <LanguageGate />
             <CustomCursor />
             <main className="relative z-10">
@@ -56,6 +57,17 @@ export function CinemaExperience({
       </SiteProvider>
     </LangProvider>
   );
+}
+
+/** The cinema engine has no envelope/overture to break, so release the scroll
+ *  lock as soon as the guest has chosen a language. */
+function Unlocker() {
+  const { ready } = useLang();
+  const { unlockScroll } = useLenis();
+  useEffect(() => {
+    if (ready) unlockScroll();
+  }, [ready, unlockScroll]);
+  return null;
 }
 
 /* ----------------------------- helpers ----------------------------- */
