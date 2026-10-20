@@ -16,6 +16,15 @@ export type SiteStatus = "draft" | "paid" | "live" | "archived";
 /** A couple's stored character looks are the full customizable Avatar set. */
 export type CharacterLook = AvatarLook;
 
+/** Photos/videos a couple provides for the photo-driven (cinema) designs.
+ *  All values are public URLs (Supabase Storage, or any https link). */
+export interface SiteMedia {
+  heroImage?: string; // full-screen opening poster
+  heroVideo?: string; // optional looping hero video (takes over from heroImage)
+  portrait?: string; // couple portrait used in the story scene
+  gallery?: string[]; // "Moments, Framed" grid
+}
+
 /** One chapter of the couple's story (bilingual). */
 export interface ChapterEntry {
   id: string;
@@ -58,6 +67,9 @@ export interface Site {
 
   groomLook: CharacterLook;
   brideLook: CharacterLook;
+
+  /** Photos/videos for the photo-driven (cinema) designs. Avatar designs ignore it. */
+  media?: SiteMedia;
 
   domain?: string; // custom domain once assigned
   notes?: string; // internal ops notes, never guest-facing

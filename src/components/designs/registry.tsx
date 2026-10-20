@@ -3,6 +3,8 @@ import type { Lang, Strings } from "@/lib/i18n";
 import type { ResolvedSite } from "@/lib/siteContent";
 import { Experience } from "@/components/Experience";
 import { MidnightExperience } from "@/components/designs/midnight/MidnightExperience";
+import { CinemaExperience } from "@/components/designs/cinema/CinemaExperience";
+import { CINEMA_THEMES } from "./cinema/theme";
 import { DESIGN_META, DEFAULT_DESIGN_ID, type DesignMeta } from "./meta";
 
 /**
@@ -26,6 +28,13 @@ export interface DesignEntry extends DesignMeta {
 const COMPONENTS: Record<string, DesignComponent> = {
   "enchanted-garden": Experience,
   "midnight-royal": MidnightExperience,
+  // Every cinema theme renders the same engine, bound to its theme.
+  ...Object.fromEntries(
+    CINEMA_THEMES.map((theme) => [
+      theme.id,
+      ((props) => <CinemaExperience {...props} theme={theme} />) as DesignComponent,
+    ])
+  ),
 };
 
 export const DESIGNS: Record<string, DesignEntry> = Object.fromEntries(

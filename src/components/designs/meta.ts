@@ -11,6 +11,8 @@ export interface DesignMeta {
   accentColor: string;
 }
 
+import { CINEMA_THEMES } from "./cinema/theme";
+
 export const DESIGN_META: DesignMeta[] = [
   {
     id: "enchanted-garden",
@@ -26,6 +28,13 @@ export const DESIGN_META: DesignMeta[] = [
       "A starlit navy-and-gold night — a glowing monogram, the couple under moonlight, the story in the stars.",
     accentColor: "#d9b45a",
   },
+  // Photo-driven "cinema" engine — one film, re-skinned into these premium themes.
+  ...CINEMA_THEMES.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    accentColor: t.accentColor,
+  })),
 ];
 
 export const DEFAULT_DESIGN_ID = "enchanted-garden";

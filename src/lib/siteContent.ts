@@ -1,5 +1,5 @@
 import { DICT, type Chapter, type Lang, type Strings } from "./i18n";
-import type { Site } from "./admin/types";
+import type { Site, SiteMedia } from "./admin/types";
 import {
   BRIDE_DEFAULT_LOOK,
   GROOM_DEFAULT_LOOK,
@@ -28,6 +28,7 @@ export interface ResolvedSite {
   mapsUrl: string;
   accentColor: string;
   defaultLanguage: Lang;
+  media: SiteMedia;
 }
 
 function chaptersFor(site: Site, lang: Lang): Chapter[] {
@@ -78,5 +79,6 @@ export function resolveSite(site: Site, accentColor: string): ResolvedSite {
     mapsUrl: site.venueMapsUrl,
     accentColor,
     defaultLanguage: site.defaultLanguage,
+    media: site.media ?? {},
   };
 }
